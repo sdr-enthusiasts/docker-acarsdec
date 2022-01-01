@@ -67,10 +67,6 @@ RUN set -x && \
         "${KEPT_PACKAGES[@]}" \
         "${TEMP_PACKAGES[@]}"\
         && \
-    # python3 -m pip install --no-cache-dir \
-    #     -r /webapp/requirements.txt \
-    #     && \
-    # rtl-sdr
     git clone git://git.osmocom.org/rtl-sdr.git /src/rtl-sdr && \
     pushd /src/rtl-sdr && \
     git checkout "${BRANCH_RTLSDR}" && \
@@ -104,10 +100,6 @@ RUN set -x && \
     make && \
     make install && \
     popd && popd && \
-    # directory for logging
-    mkdir -p /run/acars && \
-    # extract webapp
-    tar -xzvf /src/webapp.tar.gz -C / && \
     # install S6 Overlay
     curl -s https://raw.githubusercontent.com/mikenye/deploy-s6-overlay/master/deploy-s6-overlay.sh | sh && \
     # deploy healthchecks framework
