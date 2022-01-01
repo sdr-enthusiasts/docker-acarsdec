@@ -1,0 +1,102 @@
+#!/bin/bash
+## !/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# create the /run/acars dir
+# mkdir -p /run/acars/
+
+SPLIT_FREQS=()
+
+# Just in case the container was docker restart we should clean up some dirs if present
+# thanks k1xt
+
+# rm -rf /etc/services.d/decoder >/dev/null 2>&1
+
+# STATION_ID needs to be set
+
+if [[ -z "$STATION_ID" ]]; then
+	echo "STATION_ID is not set, exiting"
+	exit 1
+fi
+
+# FREQUENCIES needs to be set
+
+if [[ -z "$FREQUENCIES" ]]; then
+	echo "FREQUENCIES is not set, exiting"
+	exit 1
+fi
+
+IFS=' '
+read -ra SPLIT_FREQS <<< "$FREQUENCIES"
+
+# loop through SPLIT_FREQS
+
+# We can only have 6 total frequencies
+
+if [[ "${#SPLIT_FREQS[@]}" -gt 6 ]]; then
+	echo "FREQUENCIES is too long, exiting"
+	exit 1
+fi
+
+# FREQUENCIES needs to be in the range of 118.0 - 137.0.
+
+for i in "${SPLIT_FREQS[@]}"
+do
+:
+if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
+	echo "FREQUENCY $i is not in the range of 118.0 - 137.0, exiting"
+	exit 1
+fi
+done
+
+# DEVICE_ID or SERIAL needs to be set
+
+if [[ -z "$DEVICE_ID" && -z "$SERIAL" ]]; then
+	echo "DEVICE_ID or SERIAL are not set, exiting"
+	exit 1
+fi
+
+# DEVICE_ID and SERIAL cannot both be set
+
+if [[ -n "$DEVICE_ID" && -n "$SERIAL" ]]; then
+	echo "DEVICE_ID and SERIAL cannot both be set, exiting"
+	exit 1
+fi
+
+# Verify the device ID or SERIAL is valid
+
+if [[ -n "$DEVICE_ID" ]]; then
+	# Ensure Device ID index makes sense. I chose 10....I suppose that's good enough?
+	if [[ $(echo "$DEVICE_ID >= 0" | bc) -eq 0 || $(echo "$DEVICE_ID <= 10" | bc) -eq 0 ]]; then
+		echo "DEVICE_ID is not in the range of 1 - 10, exiting"
+		exit 1
+	fi
+fi
+
+#RTL_TEST_OUTPUT=$(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s+\S+?,\s+\S+?,\s+SN:\s+\S+?\s*$' || true)
+RTL_TEST_OUTPUT="  0:  Realtek, RTL2838UHIDIR, SN: 00012785"
+IFS=$'\n'
+for RTL_TEST_OUTPUT_LINE in $RTL_TEST_OUTPUT; do
+	# Unset variables in case any regexes fail
+	unset RTL_DEVICE_ID RTL_DEVICE_MAKE RTL_DEVICE_MODEL RTL_DEVICE_SERIAL
+
+	# Pull variables from output via regex
+	RTL_DEVICE_NUMBER=$(echo "$RTL_TEST_OUTPUT_LINE" | grep -oP '^\s+\K\d+(?=:\s+\S+?,\s+\S+?,\s+SN:\s+\S+?\s*$)')
+	RTL_DEVICE_SERIAL=$(echo "$RTL_TEST_OUTPUT_LINE" | grep -oP '^\s+\d+:\s+\S+?,\s+\S+?,\s+SN:\s+\K\S+?(?=\s*$)')
+
+	# See if we've found the device we're looking for
+	if [[ -n "$SERIAL" && "$SERIAL" == "$RTL_DEVICE_SERIAL" ]]; then
+		echo "Serial '$SERIAL' resolves to device ID $RTL_DEVICE_NUMBER"
+		OUTPUT_DEVICE_ID="$RTL_DEVICE_NUMBER"
+	elif [[ -n "$DEVICE_ID" && "$DEVICE_ID" == "$RTL_DEVICE_NUMBER" ]]; then
+		echo "Device ID '$DEVICE_ID' resolves to device serial $RTL_DEVICE_SERIAL"
+		OUTPUT_DEVICE_ID="$RTL_DEVICE_NUMBER"
+	fi
+done
+
+echo "$OUTPUT_DEVICE_ID"
+
+sed -i.test "s/DEVICE_ID=\"\"/DEVICE_ID=\"$OUTPUT_DEVICE_ID\"/g" ../services.d/acarsdec/run
+# Everything is good to go. Exit with 0
+
+exit 0
