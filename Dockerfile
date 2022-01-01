@@ -5,11 +5,11 @@ ENV BRANCH_RTLSDR="ed0317e6a58c098874ac58b769cf2e609c18d9a5" \
     SERIAL="" \
     DEVICE_INDEX="" \
     GAIN="-10" \
-    QUIET_LOGS="" \
+    QUIET_LOGS="TRUE" \
     PPM="0"\
     RTL_MULTI="" \
-    FEED="" \
     FREQUENCIES="" \
+    STATION_ID="" \
     ACARSHUB_SERVER="acarshub-server"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -54,17 +54,8 @@ RUN set -x && \
     KEPT_PACKAGES+=(socat) && \
     KEPT_PACKAGES+=(ncat) && \
     KEPT_PACKAGES+=(net-tools) && \
-    KEPT_PACKAGES+=(python3) && \
-    KEPT_PACKAGES+=(python3-pip) && \
-    KEPT_PACKAGES+=(python3-setuptools) && \
-    KEPT_PACKAGES+=(python3-wheel) && \
-    # KEPT_PACKAGES+=(gunicorn3) && \
-    TEMP_PACKAGES+=(python3-dev) && \
     # process management
     KEPT_PACKAGES+=(procps) && \
-    # stats
-    KEPT_PACKAGES+=(rrdtool) && \
-    TEMP_PACKAGES+=(librrd-dev) && \
     # install packages
     ## Builder fixes...
     mkdir -p /usr/sbin/ && \
@@ -76,25 +67,9 @@ RUN set -x && \
         "${KEPT_PACKAGES[@]}" \
         "${TEMP_PACKAGES[@]}"\
         && \
-    # Make latest python from source
-    # pushd /src/ && \
-    # wget -q https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz && \
-    # tar xzf Python-3.9.5.tgz && \
-    # cd Python-3.9.5 && \
-    # ./configure --enable-optimizations --with-lto --with-computed-gotos --with-system-ffi --enable-shared && \
-    # make -j "$(nproc)" && \
-    # make install && \
-    # ldconfig /usr/local/lib  && \
-    # dependencies for web interface
-    python3 -m pip install --no-cache-dir \
-        -r /webapp/requirements.txt \
-        && \
-    # Fix for Eventlet issues
-    apt-get \
-      -o Dpkg::Options::='--force-confmiss' \
-      install --reinstall --no-install-recommends -y \
-      netbase \
-      && \
+    # python3 -m pip install --no-cache-dir \
+    #     -r /webapp/requirements.txt \
+    #     && \
     # rtl-sdr
     git clone git://git.osmocom.org/rtl-sdr.git /src/rtl-sdr && \
     pushd /src/rtl-sdr && \
@@ -129,41 +104,10 @@ RUN set -x && \
     make && \
     make install && \
     popd && popd && \
-    # vdlm2dec
-    git clone https://github.com/fredclausen/vdlm2dec.git /src/vdlm2dec && \
-    pushd /src/vdlm2dec && \
-    git checkout master && \
-    mkdir build && \
-    pushd build && \
-    cmake ../ -Drtl=ON && \
-    make && \
-    make install && \
-    popd && popd && \
     # directory for logging
     mkdir -p /run/acars && \
     # extract webapp
     tar -xzvf /src/webapp.tar.gz -C / && \
-    # extract airframes-acars-decoder package to /webapp/static/airframes-acars-decoder
-    mkdir -p /src/airframes-acars-decoder && \
-    tar xvf /src/acars-decoder-typescript.tgz -C /src/airframes-acars-decoder && \
-    mkdir -p /webapp/static/airframes-acars-decoder && \
-    # delete the source files and testing artifacts
-    rm -rf /src/airframes-acars-decoder/package/dist/bin && \
-    find /src/airframes-acars-decoder/package/dist -type f -iname "*.ts" -delete && \
-    python3 /scripts/rename_acars_decoder_imports.py && \
-    rm /scripts/rename_acars_decoder_imports.py && \
-    mv -v /src/airframes-acars-decoder/package/dist/* /webapp/static/airframes-acars-decoder/ && \
-    # fix the import for Message Decoder
-    export INDEX_PATH=$(ls /webapp/static/js/index*.js) && \
-    export OLD_MD5=$(md5sum $INDEX_PATH | awk -F' ' '{print $1}') && \
-    echo $(basename /webapp/static/airframes-acars-decoder/MessageDecoder*.js) | xargs -I '{}' sed -i "s/MessageDecoder.js/$(echo {})/g" $INDEX_PATH && \
-    export NEW_MD5=$(md5sum $INDEX_PATH | awk -F' ' '{print $1}') && \
-    mv $INDEX_PATH $(echo $INDEX_PATH | sed -e "s/$OLD_MD5/$NEW_MD5/g") && \
-    sed -i "s/$(echo $OLD_MD5)/$(echo $NEW_MD5)/g" /webapp/templates/index.html && \
-    # grab the ground stations and other data from airframes
-    mkdir -p /webapp/data/ && \
-    curl https://raw.githubusercontent.com/airframesio/data/master/json/vdl/ground-stations.json > /webapp/data/ground-stations.json && \
-    curl https://raw.githubusercontent.com/airframesio/data/master/json/acars/metadata.json > /webapp/data/acars-metadata.json && \
     # install S6 Overlay
     curl -s https://raw.githubusercontent.com/mikenye/deploy-s6-overlay/master/deploy-s6-overlay.sh | sh && \
     # deploy healthchecks framework
