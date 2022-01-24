@@ -5,20 +5,21 @@
 #  - acarsdec does not depend on any services and should start immediately
 
 ACARS_BIN="/usr/local/bin/acarsdec"
-DEVICE_ID=""
 # shellcheck disable=SC2001
+DEVICE_ID=""
+FREQ_STRING=""
 
 if [ -z "$GAIN" ]; then
     GAIN="-10"
 fi
 
-ACARS_CMD=("-g" "$GAIN" "-i" "$STATION_ID")
+ACARS_CMD=("-g" "$GAIN" "-i" "$FEED_ID")
 
 if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
 fi
 
-if [ -n "${QUIET_LOGS}" ]; then
+if [ -n "${SERVER}" ]; then
 	ACARS_CMD+=("-o" "0")
 	ACARS_CMD+=("-l" "/dev/null")
 else
@@ -31,7 +32,15 @@ if [ -n "${RTLMULT}" ]; then
 fi
 
 # Send output JSON to acars_server
-ACARS_CMD+=("-j" "$ACARSHUB_SERVER:5550")
+if [ -n "${SERVER}" ]; then
+	if [[ "${MODE}" == @(J|j) ]]; then
+		ACARS_CMD+=("-j" "127.0.0.1:5550")
+	elif [[ "${MODE}" == @(P|p) ]]; then
+		ACARS_CMD+=("-n" "127.0.0.1:5550")
+	elif [[ "${MODE}" == @(A|a) ]]; then
+		ACARS_CMD+=("-N" "127.0.0.1:5550")
+	fi
+fi
 
 # Specify device ID
 if [ -n "${DEVICE_ID}" ]; then
@@ -39,7 +48,7 @@ if [ -n "${DEVICE_ID}" ]; then
 fi
 
 # shellcheck disable=SC2206
-ACARS_CMD+=($FREQUENCIES)
+ACARS_CMD+=($FREQ_STRING)
 
 set -eo pipefail
 

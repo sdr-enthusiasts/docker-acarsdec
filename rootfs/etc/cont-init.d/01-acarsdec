@@ -1,0 +1,96 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# FEED_ID needs to be set
+
+if [[ -z "${FEED_ID}" ]]; then
+	echo "FEED_ID is not set, exiting"
+	exit 1
+fi
+
+# FREQUENCIES needs to be set
+
+if [[ -z "${FREQUENCIES}" ]]; then
+	echo "FREQUENCIES is not set, exiting"
+	exit 1
+fi
+
+IFS=';'
+read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
+
+# loop through SPLIT_FREQS
+
+# We can only have 6 total frequencies
+
+if [[ "${#SPLIT_FREQS[@]}" -gt 6 ]]; then
+	echo "FREQUENCIES is too long, exiting"
+	exit 1
+fi
+
+# FREQUENCIES needs to be in the range of 118.0 - 137.0.
+
+FREQ_STRING=""
+for i in "${SPLIT_FREQS[@]}"
+do
+:
+if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
+	echo "FREQUENCY $i is not in the range of 118.0 - 137.0, exiting"
+	exit 1
+fi
+FREQ_STRING+="$i "
+done
+
+# Make sure mode is valid
+
+if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
+	echo "MODE is not valid, exiting"
+	exit 1
+fi
+
+if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
+	echo "SERVER is set but SERVER_PORT is not set, exiting"
+	exit 1
+fi
+
+# DEVICE_ID or SERIAL needs to be set
+
+if [[ -z "${SERIAL}" ]]; then
+	echo "SERIAL is not set, exiting"
+	exit 1
+fi
+
+RTL_TEST_OUTPUT=$(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s+\S+?,\s+\S+?,\s+SN:\s+\S+?\s*$' || true)
+
+IFS=$'\n'
+for RTL_TEST_OUTPUT_LINE in $RTL_TEST_OUTPUT; do
+	# Unset variables in case any regexes fail
+	unset RTL_DEVICE_ID RTL_DEVICE_MAKE RTL_DEVICE_MODEL RTL_DEVICE_SERIAL
+
+	# Pull variables from output via regex
+	RTL_DEVICE_NUMBER=$(echo "$RTL_TEST_OUTPUT_LINE" | grep -oP '^\s+\K\d+(?=:\s+\S+?,\s+\S+?,\s+SN:\s+\S+?\s*$)')
+	RTL_DEVICE_SERIAL=$(echo "$RTL_TEST_OUTPUT_LINE" | grep -oP '^\s+\d+:\s+\S+?,\s+\S+?,\s+SN:\s+\K\S+?(?=\s*$)')
+
+	# See if we've found the device we're looking for
+	if [[ -n "$SERIAL" && "$SERIAL" == "$RTL_DEVICE_SERIAL" ]]; then
+		OUTPUT_DEVICE_ID="$RTL_DEVICE_NUMBER"
+	fi
+done
+
+if [[ -z "${OUTPUT_DEVICE_ID}" ]]; then
+	echo "Could not find device ID for serial '$SERIAL'"
+	# exit 1
+fi
+
+rm -rf /etc/services.d/acarsdec/run > /dev/null 2>&1
+cp /etc/templates/run /etc/services.d/acarsdec/run
+s6-chmod 0755 /etc/services.d/acarsdec/run
+
+mkdir -p /run/acars
+touch /run/acars/acars.past5min.json
+
+sed -i "s/DEVICE_ID=\"\"/DEVICE_ID=\"$OUTPUT_DEVICE_ID\"/g" /etc/services.d/acarsdec/run
+sed -i "s/FREQ_STRING=\"\"/FREQ_STRING=\"$FREQ_STRING\"/g" /etc/services.d/acarsdec/run
+
+# Everything is good to go. Exit with 0
+
+exit 0

@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+set -o pipefail
+
+# Require that acars_server is running
+if ! netstat -an | grep -P '^\s*tcp\s+\d+\s+\d+\s+0\.0\.0\.0:15550\s+(?>\d{1,3}\.{0,1}){4}:\*\s+LISTEN\s*$' > /dev/null; then
+  sleep 1
+  exit
+fi
+set -e
+
+SERVER_ADDR="UDP:${SERVER}:${SERVER_PORT}"
+# shellcheck disable=SC2016
+socat -d TCP:127.0.0.1:15550 "$SERVER_ADDR" \
+  2>&1 | stdbuf -oL awk '{print "[acars_feeder] " strftime("%Y/%m/%d %H:%M:%S", systime()) " " $0}'
+
+sleep 5
