@@ -22,7 +22,7 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 
 # We can only have 6 total frequencies
 
-if [[ "${#SPLIT_FREQS[@]}" -gt 6 ]]; then
+if [[ "${#SPLIT_FREQS[@]}" -gt 8 ]]; then
 	echo "FREQUENCIES is too long, exiting"
 	exit 1
 fi
