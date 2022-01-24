@@ -24,7 +24,7 @@ jobs:
     #  - IMAGE: image name on dockerhub
     env:
       REPO: fredclausen
-      IMAGE: acarshub-acarsdecoder
+      IMAGE: acarshub-acarsdec
       PUSH: true
     steps:
 
