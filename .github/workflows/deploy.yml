@@ -33,41 +33,6 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
 
-      # Get version tag
-      # git log -1 : get the latest commit
-      # --format="%ct" : committer date, UNIX timestamp
-      # Then using `date` to format to YYYYMMDD format
-      -
-        name: Get version tag from file
-        run: |
-          echo "VERSION_TAG=$(sed '1!d' ./version)" >> $GITHUB_ENV
-          echo "VERSION_TAG_DOCKER=$(sed '2!d' ./version)" >> $GITHUB_ENV
-
-      # # Show version tag
-      -
-        name: Show version tag
-        run: |
-          echo "ACARS Hub Decoder Version: ${{ env.VERSION_TAG }}"
-          echo "ACARS Hub Decoder Version: ${{ env.VERSION_TAG_DOCKER }}"
-
-
-      - name: Create version file
-        run: |
-          echo "${{ env.VERSION_TAG }}" >> ./rootfs/acarshub-decoder-version
-
-      # Hit an issue where arm builds would fail with cURL errors regarding intermediary certificates when downloading from github (ie: deploy-s6-overlay).
-      # After many hours of troubleshooting, the workaround is to pre-load the image's rootfs with the CA certificates from the runner.
-      # This problem may go away in future.
-      -
-        name: Copy CA Certificates from GitHub Runner to Image rootfs
-        run: |
-          ls -la /etc/ssl/certs/
-          mkdir -p ./rootfs/etc/ssl/certs
-          mkdir -p ./rootfs/usr/share/ca-certificates/mozilla
-          cp --no-dereference /etc/ssl/certs/*.crt ./rootfs/etc/ssl/certs
-          cp --no-dereference /etc/ssl/certs/*.pem ./rootfs/etc/ssl/certs
-          cp --no-dereference /usr/share/ca-certificates/mozilla/*.crt ./rootfs/usr/share/ca-certificates/mozilla
-
       # Set up QEMU for multi-arch builds
       -
         name: Set up QEMU
@@ -99,18 +64,6 @@ jobs:
           push: ${{ env.PUSH }}
           tags: ${{ env.REPO }}/${{ env.IMAGE }}:latest
 
-      # Build version specific
-      -
-        name: Build & Push - version specific
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile
-          no-cache: true
-          platforms: linux/386,linux/amd64,linux/arm/v7,linux/arm/v6,linux/arm64
-          push: ${{ env.PUSH }}
-          tags: ${{ env.REPO }}/${{ env.IMAGE }}:${{ env.VERSION_TAG_DOCKER }}
-
       # Patch dockerfile to remove healthcheck
       -
         name: Patch Dockerfile to remove healthcheck
@@ -128,14 +81,3 @@ jobs:
           push: ${{ env.PUSH }}
           tags: ${{ env.REPO }}/${{ env.IMAGE }}:latest_nohealthcheck
 
-      # Build version specific _nohealthcheck
-      -
-        name: Build & Push - version specific nohealthcheck
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile.nohealthcheck
-          no-cache: true
-          platforms: linux/386,linux/amd64,linux/arm/v7,linux/arm/v6,linux/arm64
-          push: ${{ env.PUSH }}
-          tags: ${{ env.REPO }}/${{ env.IMAGE }}:${{ env.VERSION_TAG_DOCKER }}_nohealthcheck
