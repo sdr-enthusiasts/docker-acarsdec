@@ -53,9 +53,29 @@ ACARS_CMD+=($FREQ_STRING)
 set -eo pipefail
 
 echo "[acarsdec-$DEVICE_ID] Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
-
-# shellcheck disable=SC2016
-"$ACARS_BIN" "${ACARS_CMD[@]}" \
-2>&1 | stdbuf -oL sed --unbuffered '/^$/d' | stdbuf -oL awk '{print "[acarsdec] " strftime("%Y/%m/%d %H:%M:%S", systime()) " " $0}'
+if [[ -n "${QUIET_LOGS}" ]]; then
+	# shellcheck disable=SC2016
+	"$ACARS_BIN" "${ACARS_CMD[@]}" 2>&1 | \
+	stdbuf -oL sed --unbuffered '/^$/d' | \
+	stdbuf -oL awk '! /^dumpvdl2/' | \
+	stdbuf -oL awk '! /^Sampling rate set/' | \
+	stdbuf -oL awk '! /^Found \d+ device(s):/' | \
+	stdbuf -oL awk '! /^  [0-9]+/' | \
+	stdbuf -oL awk '! /^Using device [0-9]+/' | \
+	stdbuf -oL awk '! /^Found /' | \
+	stdbuf -oL awk '! /^Exact sample rate /' | \
+	stdbuf -oL awk '! /^Setting sample rate/' | \
+	stdbuf -oL awk '! /PLL not locked!$/' | \
+	stdbuf -oL awk '! /^Center frequency set/' | \
+	stdbuf -oL awk '! /^Device [#]?[0-9]+/' | \
+	stdbuf -oL awk '! /^Tuner gain: /' | \
+	stdbuf -oL awk '! /^Set center freq. /' | \
+	stdbuf -oL awk '! /^Decoding [0-9]+ channels/' | \
+	stdbuf -oL awk '{print "[acarsdec] " strftime("%Y/%m/%d %H:%M:%S", systime()) " " $0}'
+else
+	# shellcheck disable=SC2016
+	"$ACARS_BIN" "${ACARS_CMD[@]}" \
+	2>&1 | stdbuf -oL sed --unbuffered '/^$/d' | stdbuf -oL awk '{print "[acarsdec] " strftime("%Y/%m/%d %H:%M:%S", systime()) " " $0}'
+fi
 
 sleep 5

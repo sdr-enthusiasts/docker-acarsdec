@@ -51,7 +51,7 @@ for service_dir in /etc/services.d/*; do
   service_name=$(basename "$service_dir")
 
   # If the service is acarsdec-*...
-  if [[ "$service_name" =~ acarsdec-.+ ]]; then
+  if [[ "$service_name" == acarsdec ]]; then
 
     decoder_pid=$(get_pid_of_decoder "$service_dir")
     decoder_udp_port="5550"

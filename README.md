@@ -55,3 +55,4 @@ services:
 | `SERVER` | The server where messages will be forwarded to. | No | Blank |
 | `SERVER_PORT` | The port where the server will receive messages on. | No | `5550` |
 | `MODE` | The output mode. `P` for planeplotter, `J` for JSON and `A` for acarsdec. | No | `J` |
+| `QUIET_LOGS` | Mute log output to the bare minimum. Set to a blank value to disable.| No | `TRUE` |
