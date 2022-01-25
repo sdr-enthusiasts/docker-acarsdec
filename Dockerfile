@@ -1,4 +1,4 @@
-FROM fredclausen/acarssdr-base:latest
+FROM ghcr.io/fredclausen/docker-baseimage:acars-decoder
 
 ENV DEVICE_INDEX="" \
     QUIET_LOGS="TRUE" \
