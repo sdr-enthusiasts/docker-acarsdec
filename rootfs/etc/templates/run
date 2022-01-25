@@ -71,6 +71,7 @@ if [[ -n "${QUIET_LOGS}" ]]; then
 	stdbuf -oL awk '! /^Tuner gain: /' | \
 	stdbuf -oL awk '! /^Set center freq. /' | \
 	stdbuf -oL awk '! /^Decoding [0-9]+ channels/' | \
+	stdbuf -oL awk '! /^Allocating [0-9]+ zero-copy buffers: /' | \
 	stdbuf -oL awk '{print "[acarsdec] " strftime("%Y/%m/%d %H:%M:%S", systime()) " " $0}'
 else
 	# shellcheck disable=SC2016
