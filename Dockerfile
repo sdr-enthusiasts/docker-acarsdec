@@ -25,8 +25,6 @@ RUN set -x && \
     TEMP_PACKAGES+=(automake) && \
     TEMP_PACKAGES+=(autoconf) && \
     TEMP_PACKAGES+=(wget) && \
-    # required for startup checks
-    KEPT_PACKAGES+=(bc) && \
     # install packages
     apt-get update && \
     apt-get install -y --no-install-recommends \
