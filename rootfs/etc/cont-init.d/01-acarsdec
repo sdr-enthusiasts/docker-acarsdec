@@ -37,7 +37,7 @@ if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; th
 	echo "FREQUENCY $i is not in the range of 118.0 - 137.0, exiting"
 	exit 1
 fi
-FREQ_STRING+="$i "
+FREQ_STRING+=" $i"
 done
 
 # Make sure mode is valid

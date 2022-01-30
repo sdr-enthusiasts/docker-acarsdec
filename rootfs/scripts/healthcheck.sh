@@ -16,7 +16,7 @@ function get_pid_of_decoder {
   service_dir="$1"
 
   # Ensure variables are unset
-  unset DEVICE_ID FREQS_VDLM VDLM_BIN FREQS_ACARS ACARS_BIN
+  unset DEVICE_ID ACARS_BIN FREQ_STRING
 
   # Get DEVICE_ID
   eval "$(grep "DEVICE_ID=\"" "$service_dir"/run)"
@@ -30,7 +30,7 @@ function get_pid_of_decoder {
   # Get PS output for the relevant process
   if [[ -n "$ACARS_BIN" ]]; then
     # shellcheck disable=SC2009
-    ps_output=$(ps aux | grep "$ACARS_BIN" | grep " -r $DEVICE_ID " | grep " $FREQ_STRING")
+    ps_output=$(ps aux | grep "$ACARS_BIN" | grep " -r $DEVICE_ID " | grep "$FREQ_STRING")
   fi
 
   # Find the PID of the decoder based on command line
