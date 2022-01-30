@@ -30,10 +30,7 @@ function get_pid_of_decoder {
   # Get PS output for the relevant process
   if [[ -n "$ACARS_BIN" ]]; then
     # shellcheck disable=SC2009
-    ps_output=$(ps aux | grep "$ACARS_BIN" | grep " -r $DEVICE_ID " | grep " $FREQS_ACARS")
-  elif [[ -n "$VDLM_BIN" ]]; then
-    # shellcheck disable=SC2009
-    ps_output=$(ps aux | grep "$VDLM_BIN" | grep " --rtlsdr $DEVICE_ID " | grep " $FREQS_VDLM")
+    ps_output=$(ps aux | grep "$ACARS_BIN" | grep " -r $DEVICE_ID " | grep " $FREQ_STRING")
   fi
 
   # Find the PID of the decoder based on command line
@@ -93,17 +90,6 @@ if ! check_tcp4_socket_listening_for_pid "0.0.0.0" "15550" "${acars_pidof_acars_
     EXITCODE=1
 else
     echo "acars_server TCP listening on port 15550 (pid $acars_pidof_acars_tcp_server): HEALTHY"
-fi
-
-if [ -n "${ENABLE_WEB}" ]; then
-    if ! netstat -anp | grep -P "tcp\s+\d+\s+\d+\s+127.0.0.1:[0-9]+\s+127.0.0.1:15550\s+ESTABLISHED\s+[0-9]+/python3" > /dev/null 2>&1; then
-        echo "acars_server TCP4 connection between 127.0.0.1:ANY and 127.0.0.1:15550 for python3 established: FAIL"
-        echo "acars_server TCP not connected to python server on port 15550: UNHEALTHY"
-        EXITCODE=1
-    else
-        echo "TCP4 connection between 127.0.0.1:ANY and 127.0.0.1:15550 for python3 established: PASS"
-        echo "acars_server TCP connected to python3 server on port 15550: HEALTHY"
-    fi
 fi
 
 echo "==== Checking acars_stats ====="
