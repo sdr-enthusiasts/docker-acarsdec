@@ -82,7 +82,12 @@ if [[ -z "${OUTPUT_DEVICE_ID}" ]]; then
 fi
 
 rm -rf /etc/services.d/acarsdec/run > /dev/null 2>&1
-cp /etc/templates/run /etc/services.d/acarsdec/run
+if [[ -n "${OUTPUT_DEVICE_ID}" ]]; then
+	cp /etc/templates/run /etc/services.d/acarsdec/run
+else
+	cp /etc/templates/bad /etc/services.d/acarsdec/run
+fi
+
 s6-chmod 0755 /etc/services.d/acarsdec/run
 
 mkdir -p /run/acars

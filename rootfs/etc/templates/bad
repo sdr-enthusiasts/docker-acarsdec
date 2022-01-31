@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+#shellcheck shell=bash
+
+# shellcheck disable=SC2001,SC2034
+ACARS_BIN="/usr/local/bin/acarsdec"
+# shellcheck disable=SC2001,SC2034
+DEVICE_ID=""
+# shellcheck disable=SC2001,SC2034
+FREQ_STRING=""
+# shellcheck disable=SC2001,SC2034
+VDLM_CMD=()
+echo "NO DECODER IS STARTING"
+sleep 86400
