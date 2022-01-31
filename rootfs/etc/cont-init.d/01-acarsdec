@@ -78,7 +78,7 @@ done
 
 if [[ -z "${OUTPUT_DEVICE_ID}" ]]; then
 	echo "Could not find device ID for serial '$SERIAL'"
-	# exit 1
+	exit 1
 fi
 
 rm -rf /etc/services.d/acarsdec/run > /dev/null 2>&1
