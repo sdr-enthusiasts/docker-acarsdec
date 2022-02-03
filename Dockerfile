@@ -1,4 +1,4 @@
-FROM ghcr.io/fredclausen/docker-baseimage:acars-decoder
+FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
 
 ENV DEVICE_INDEX="" \
     QUIET_LOGS="TRUE" \
