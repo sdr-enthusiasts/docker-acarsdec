@@ -14,6 +14,9 @@ on:
   # Build and deploy the image nightly (to ensure we pick up any security updates)
   schedule:
     - cron: "0 14 * * *"
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   deploy_dockerhub_latest:
@@ -51,7 +54,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       # Build & Push Dockerfile (only push if this action was NOT triggered by a PR)
-      - name: Build & Push ghcr.io/sdr-enthusiasts/docker-baseimage:base
+      - name: Build & Push ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -66,13 +69,6 @@ jobs:
     name: Deploy to Latest Noheathcheck DockerHub
     runs-on: ubuntu-latest
 
-    # Set job-wide environment variables
-    #  - REPO: repo name on dockerhub
-    #  - IMAGE: image name on dockerhub
-    env:
-      REPO: fredclausen
-      IMAGE: acarsdec
-      PUSH: true
     steps:
 
       # Check out our code
@@ -109,7 +105,7 @@ jobs:
 
       # Build "latest_nohealthcheck"
       # Build & Push Dockerfile (only push if this action was NOT triggered by a PR)
-      - name: Build & Push ghcr.io/sdr-enthusiasts/docker-baseimage:base
+      - name: Build & Push ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
         uses: docker/build-push-action@v2
         with:
           context: .
