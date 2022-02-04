@@ -3,6 +3,10 @@ name: Deploy to Docker Hub
 on:
   # Enable manual running of action if necessary
   workflow_dispatch:
+    inputs:
+      reason:
+        required: true
+        description: 'Reason for running this workflow'
   # Build and deploy the image on pushes to main branch
   push:
     branches:
@@ -19,6 +23,21 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    name: Triggered via Workflow Dispatch?
+    # only run this step if workflow dispatch triggered
+    # log the reason the workflow dispatch was triggered
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.reason != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log dispatch reason
+        env:
+          INPUTS_REASON: ${{ github.event.inputs.reason }}
+        run: |
+          echo "Workflow dispatch reason: $INPUTS_REASON"
+
   deploy_ghcr_latest:
     name: Deploy Latest to DockerHub
     runs-on: ubuntu-latest
