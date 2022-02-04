@@ -18,6 +18,10 @@ Please see: [Buster-Docker-Fixes](https://github.com/fredclausen/Buster-Docker-F
 
 A computer host on a suitable architecture and one USB RTL-SDR dongle connected to an antenna.
 
+## ACARS Hub integration
+
+The default `SERVER` and `SERVER_PORT` values are suitable for automatically working with ACARS Hub, provided ACARS Hub is **on the same pi as the decoder**. If ACARS Hub is not on the same Pi, please provide the correct host name in the `SERVER` variable. Very likely you will not have to change the `SERVER_PORT`, but if you did change the port mapping on your ACARS Hub (and you will know if you did) please set the server port correctly as well.
+
 ## Up and running
 
 ```yaml
@@ -25,7 +29,7 @@ version: '2.0'
 
 services:
   acarsdec:
-    image: fredclausen/acarsdec:latest
+    image:  ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
     tty: true
     container_name: acarsdec
     restart: always
