@@ -20,7 +20,7 @@ if [[ -z "${QUIET_LOGS}" ]]; then
 fi
 
 # shellcheck disable=SC2016
-socat -d -d -d -d TCP:127.0.0.1:15550 "$SERVER_ADDR" \
+socat -d TCP:127.0.0.1:15550 "$SERVER_ADDR" \
   2>&1 | stdbuf -oL awk '{print "[acars_feeder] " strftime("%Y/%m/%d %H:%M:%S", systime()) " " $0}'
 
 sleep 5
