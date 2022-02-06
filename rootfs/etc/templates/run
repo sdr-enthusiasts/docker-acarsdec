@@ -59,7 +59,8 @@ ACARS_CMD+=($FREQ_STRING)
 
 set -eo pipefail
 
-echo "[acarsdec-$DEVICE_ID] Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
+echo "[acarsdec] Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
+
 if [[ -n "${QUIET_LOGS}" ]]; then
 	# shellcheck disable=SC2016
 	"$ACARS_BIN" "${ACARS_CMD[@]}" 2>&1 | \
