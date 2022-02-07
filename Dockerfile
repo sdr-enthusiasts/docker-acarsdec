@@ -2,12 +2,11 @@ FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
 
 ENV DEVICE_INDEX="" \
     QUIET_LOGS="TRUE" \
-    RTL_MULTI="" \
     FREQUENCIES="" \
     FEED_ID="" \
     PPM="0"\
     GAIN="-10" \
-    ACARS_RTLMULT="161" \
+    RTLMULT="160" \
     SERIAL="" \
     SERVER="acarshub" \
     SERVER_PORT="5550" \
