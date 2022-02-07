@@ -6,7 +6,7 @@ set -o pipefail
 # Require that acars_server is running
 if ! netstat -an | grep -P '^\s*tcp\s+\d+\s+\d+\s+0\.0\.0\.0:15550\s+(?>\d{1,3}\.{0,1}){4}:\*\s+LISTEN\s*$' > /dev/null; then
   sleep 1
-  if [[ -z "${QUIET_LOGS}" ]]; then
+  if [[ ! ${QUIET_LOGS,,} =~ true ]]; then
     echo "[acars_feeder] acars_server not running, exiting"
   fi
   exit
@@ -15,7 +15,7 @@ set -e
 
 SERVER_ADDR="UDP:${SERVER}:${SERVER_PORT}"
 
-if [[ -z "${QUIET_LOGS}" ]]; then
+if [[ ! ${QUIET_LOGS,,} =~ true ]]; then
     echo "[acars_feeder] Starting acars_feeder with ${SERVER_ADDR}"
 fi
 
