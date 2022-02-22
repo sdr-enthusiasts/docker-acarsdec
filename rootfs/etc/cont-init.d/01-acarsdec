@@ -41,7 +41,6 @@ FREQ_STRING+=" $i"
 done
 
 # Make sure mode is valid
-
 if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
 	echo "MODE is not valid, exiting"
 	exit 1
@@ -53,9 +52,14 @@ if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
 fi
 
 # SERIAL needs to be set
-
 if [[ -z "${SERIAL}" ]]; then
 	echo "SERIAL is not set, exiting"
+	exit 1
+fi
+
+# Make sure GAIN is valid (if set)
+if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "${GAIN}")" == "0" ]]; then
+	echo "GAIN is not valid, exiting"
 	exit 1
 fi
 
