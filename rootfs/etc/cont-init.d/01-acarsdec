@@ -60,7 +60,7 @@ if [[ -z "${SERIAL}" ]]; then
 fi
 
 IFS=$'\n' RTL_TEST_OUTPUT=( $(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true) )
-for RTL_TEST_OUTPUT_LINE in ${RTL_TEST_OUTPUT[@]}; do
+for RTL_TEST_OUTPUT_LINE in "${RTL_TEST_OUTPUT[@]}"; do
         [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]] && OUTPUT_DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}" || true
 done
 
