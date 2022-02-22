@@ -20,10 +20,10 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 
 # loop through SPLIT_FREQS
 
-# We can only have 6 total frequencies
+# We can only have 8 total frequencies
 
 if [[ "${#SPLIT_FREQS[@]}" -gt 8 ]]; then
-	echo "FREQUENCIES is too long, exiting"
+	echo "FREQUENCIES may not contain more than 8 frequencies, exiting"
 	exit 1
 fi
 
@@ -52,33 +52,21 @@ if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
 	exit 1
 fi
 
-# DEVICE_ID or SERIAL needs to be set
+# SERIAL needs to be set
 
 if [[ -z "${SERIAL}" ]]; then
 	echo "SERIAL is not set, exiting"
 	exit 1
 fi
 
-RTL_TEST_OUTPUT=$(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s+\S+?,\s+\S+?,\s+SN:\s+\S+?\s*$' || true)
-
-IFS=$'\n'
-for RTL_TEST_OUTPUT_LINE in $RTL_TEST_OUTPUT; do
-	# Unset variables in case any regexes fail
-	unset RTL_DEVICE_ID RTL_DEVICE_MAKE RTL_DEVICE_MODEL RTL_DEVICE_SERIAL
-
-	# Pull variables from output via regex
-	RTL_DEVICE_NUMBER=$(echo "$RTL_TEST_OUTPUT_LINE" | grep -oP '^\s+\K\d+(?=:\s+\S+?,\s+\S+?,\s+SN:\s+\S+?\s*$)')
-	RTL_DEVICE_SERIAL=$(echo "$RTL_TEST_OUTPUT_LINE" | grep -oP '^\s+\d+:\s+\S+?,\s+\S+?,\s+SN:\s+\K\S+?(?=\s*$)')
-
-	# See if we've found the device we're looking for
-	if [[ -n "$SERIAL" && "$SERIAL" == "$RTL_DEVICE_SERIAL" ]]; then
-		OUTPUT_DEVICE_ID="$RTL_DEVICE_NUMBER"
-	fi
+IFS=$'\n' RTL_TEST_OUTPUT=( $(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true) )
+for RTL_TEST_OUTPUT_LINE in ${RTL_TEST_OUTPUT[@]}; do
+        [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]] && OUTPUT_DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}" || true
 done
 
 if [[ -z "${OUTPUT_DEVICE_ID}" ]]; then
-	echo "Could not find device ID for serial '$SERIAL'"
-	exit 1
+        echo "Could not find Device ID for serial '$SERIAL'"
+        exit 1
 fi
 
 rm -rf /etc/services.d/acarsdec/run > /dev/null 2>&1
