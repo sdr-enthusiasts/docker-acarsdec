@@ -41,7 +41,6 @@ FREQ_STRING+=" $i"
 done
 
 # Make sure mode is valid
-
 if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
 	echo "MODE is not valid, exiting"
 	exit 1
@@ -53,15 +52,22 @@ if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
 fi
 
 # SERIAL needs to be set
-
 if [[ -z "${SERIAL}" ]]; then
 	echo "SERIAL is not set, exiting"
 	exit 1
 fi
 
-IFS=$'\n' RTL_TEST_OUTPUT=( $(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true) )
-for RTL_TEST_OUTPUT_LINE in ${RTL_TEST_OUTPUT[@]}; do
-        [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]] && OUTPUT_DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}" || true
+# Make sure GAIN is valid (if set)
+if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "${GAIN}")" == "0" ]]; then
+	echo "GAIN is not valid, exiting"
+	exit 1
+fi
+
+mapfile -t RTL_TEST_OUTPUT < <(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true)  
+for RTL_TEST_OUTPUT_LINE in "${RTL_TEST_OUTPUT[@]}"; do
+        if [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]]; then
+		OUTPUT_DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}"
+	fi
 done
 
 if [[ -z "${OUTPUT_DEVICE_ID}" ]]; then
