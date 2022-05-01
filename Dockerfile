@@ -27,9 +27,9 @@ RUN set -x && \
     # install packages
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        "${KEPT_PACKAGES[@]}" \
-        "${TEMP_PACKAGES[@]}"\
-        && \
+    "${KEPT_PACKAGES[@]}" \
+    "${TEMP_PACKAGES[@]}"\
+    && \
     # acarsdec
     #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
     git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
@@ -38,7 +38,7 @@ RUN set -x && \
     git checkout testing && \
     mkdir build && \
     pushd build && \
-    cmake ../ -Drtl=ON && \
+    cmake ../ -Drtl=ON -DCMAKE_BUILD_TYPE=Debug && \
     make && \
     make install && \
     popd && popd && \
