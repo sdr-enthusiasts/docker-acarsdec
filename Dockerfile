@@ -32,10 +32,12 @@ RUN set -x && \
     && \
     # acarsdec
     #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
-    git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
+    #git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
+    git clone --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
     pushd /src/acarsdec && \
-    #git checkout master && \
-    git checkout testing && \
+    git checkout master && \
+    #git checkout testing && \
+    sed -i -e 's/-march=native//' CMakeLists.txt
     mkdir build && \
     pushd build && \
     cmake ../ -Drtl=ON -DCMAKE_BUILD_TYPE=Debug && \
