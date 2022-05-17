@@ -37,7 +37,7 @@ RUN set -x && \
     pushd /src/acarsdec && \
     git checkout master && \
     #git checkout testing && \
-    sed -i -e 's/-march=native//' CMakeLists.txt
+    sed -i -e 's/-march=native//' CMakeLists.txt && \
     mkdir build && \
     pushd build && \
     cmake ../ -Drtl=ON -DCMAKE_BUILD_TYPE=Debug && \
