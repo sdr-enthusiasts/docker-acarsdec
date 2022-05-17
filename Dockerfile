@@ -12,7 +12,7 @@ ENV DEVICE_INDEX="" \
     SERVER_PORT="5550" \
     MODE="J"
 
-# hadolint ignore=DL3008,SC2086,SC2039
+# hadolint ignore=DL3008,SC2086,SC2039,SC3054
 RUN set -x && \
     TEMP_PACKAGES=() && \
     KEPT_PACKAGES=() && \
@@ -32,10 +32,12 @@ RUN set -x && \
     && \
     # acarsdec
     #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
-    git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
+    #git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
+    git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
-    git checkout testing && \
+    #git checkout testing && \
+    sed -i -e 's/-march=native//' CMakeLists.txt && \
     mkdir build && \
     pushd build && \
     cmake ../ -Drtl=ON -DCMAKE_BUILD_TYPE=Debug && \
