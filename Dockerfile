@@ -12,7 +12,7 @@ ENV DEVICE_INDEX="" \
     SERVER_PORT="5550" \
     MODE="J"
 
-# hadolint ignore=DL3008,SC2086,SC2039
+# hadolint ignore=DL3008,SC2086,SC2039,SC3054
 RUN set -x && \
     TEMP_PACKAGES=() && \
     KEPT_PACKAGES=() && \
