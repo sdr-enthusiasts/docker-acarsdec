@@ -13,16 +13,20 @@ set -e
 
 ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001
-DEVICE_ID=""
+SOAPYSDR=""
 FREQ_STRING=""
 
 if [ -z "$GAIN" ]; then
     GAIN="-10"
-else 
+else
     GAIN="$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "$GAIN")"
 fi
 
 ACARS_CMD=("-g" "$GAIN" "-i" "$FEED_ID")
+
+if [ -n "${CENTER_FREQ}" ]; then
+	ACARS_CMD+=("-f" "$CENTER_FREQ")
+fi
 
 if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
@@ -36,8 +40,8 @@ else
 	ACARS_CMD+=("-v")
 fi
 
-if [ -n "${RTLMULT}" ]; then
-	ACARS_CMD+=("-m" "$RTLMULT")
+if [ -n "${RATEMULT}" ]; then
+	ACARS_CMD+=("-m" "$RATEMULT")
 fi
 
 # Send output JSON to acars_server
@@ -51,9 +55,9 @@ if [ -n "${SERVER}" ]; then
 	fi
 fi
 
-# Specify device ID
-if [ -n "${DEVICE_ID}" ]; then
-	ACARS_CMD+=("-r" "$DEVICE_ID")
+# Specify SOAPYSDR
+if [ -n "${SOAPYSDR}" ]; then
+	ACARS_CMD+=("-d" "$SOAPYSDR")
 fi
 
 # shellcheck disable=SC2206

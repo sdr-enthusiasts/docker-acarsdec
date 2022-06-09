@@ -4,7 +4,7 @@
 # shellcheck disable=SC2001,SC2034
 ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001,SC2034
-DEVICE_ID=""
+SOAPYSDR=""
 # shellcheck disable=SC2001,SC2034
 FREQ_STRING=""
 # shellcheck disable=SC2001,SC2034
