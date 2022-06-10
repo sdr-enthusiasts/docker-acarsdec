@@ -77,11 +77,11 @@ COPY acarsdec /src/acarsdec
 
 RUN set -x && \
     echo 28 && \
-    #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
-    #git clone https://github.com/rpatel3001/acarsdec.git /src/acarsdec && \
+    #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
     #git checkout testing && \
+    sed -i -e 's/-march=native//' CMakeLists.txt && \
     mkdir build && \
     pushd build && \
     cmake ../ -Dsoapy=ON -DCMAKE_BUILD_TYPE=Debug && \
