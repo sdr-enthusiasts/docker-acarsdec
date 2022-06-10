@@ -25,7 +25,7 @@ fi
 ACARS_CMD=("-g" "$GAIN" "-i" "$FEED_ID")
 
 if [ -n "${CENTER_FREQ}" ]; then
-	ACARS_CMD+=("-f" "$CENTER_FREQ")
+	ACARS_CMD+=("-c" "$CENTER_FREQ")
 fi
 
 if [ -n "${PPM}" ]; then
@@ -42,6 +42,10 @@ fi
 
 if [ -n "${RATEMULT}" ]; then
 	ACARS_CMD+=("-m" "$RATEMULT")
+fi
+
+if [ -n "${VERBOSE}" ]; then
+	ACARS_CMD+=("-v")
 fi
 
 # Send output JSON to acars_server
