@@ -27,8 +27,7 @@ RUN set -x && \
     TEMP_PACKAGES+=(automake) && \
     TEMP_PACKAGES+=(autoconf) && \
     TEMP_PACKAGES+=(wget) && \
-    KEPT_PACKAGES+=(nano) && \
-    KEPT_PACKAGES+=(gdb) && \
+#    KEPT_PACKAGES+=(nano) && \
     # install packages
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -71,13 +70,12 @@ RUN set -x && \
     make all && \
     make install && \
     popd && popd && \
-    ldconfig
+    ldconfig && \
 
-COPY acarsdec /src/acarsdec
+#COPY acarsdec /src/acarsdec
 
-RUN set -x && \
-    echo 28 && \
-    #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
+#RUN set -x && \
+    git clone --depth 1 --single-branch --branch master https://github.com/rpatel3001/acarsdec /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
     #git checkout testing && \
@@ -87,12 +85,11 @@ RUN set -x && \
     cmake ../ -Dsoapy=ON -DCMAKE_BUILD_TYPE=Debug && \
     make && \
     make install && \
-    popd && popd
+    popd && popd && \
     # Clean up
-#    apt-get remove -y "${TEMP_PACKAGES[@]}" && \
-#    apt-get autoremove -y && \
-#    rm -rf /src/* /tmp/* /var/lib/apt/lists/*
-
+    apt-get remove -y "${TEMP_PACKAGES[@]}" && \
+    apt-get autoremove -y && \
+    rm -rf /src/* /tmp/* /var/lib/apt/lists/*
 
 COPY rootfs/ /
 
