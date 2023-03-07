@@ -33,8 +33,8 @@ RUN set -x && \
     # acarsdec
     #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
     #git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
-    git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
-    #git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
+    #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
+    git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
     #git checkout testing && \
