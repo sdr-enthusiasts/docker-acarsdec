@@ -63,7 +63,7 @@ if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 1
 	exit 1
 fi
 
-mapfile -t RTL_TEST_OUTPUT < <(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true)  
+mapfile -t RTL_TEST_OUTPUT < <(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true)
 for RTL_TEST_OUTPUT_LINE in "${RTL_TEST_OUTPUT[@]}"; do
         if [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]]; then
 		OUTPUT_DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}"
@@ -87,7 +87,7 @@ s6-chmod 0755 /etc/services.d/acarsdec/run
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json
 
-sed -i "s/DEVICE_ID=\"\"/DEVICE_ID=\"$OUTPUT_DEVICE_ID\"/g" /etc/services.d/acarsdec/run
+# sed -i "s/DEVICE_ID=\"\"/DEVICE_ID=\"$OUTPUT_DEVICE_ID\"/g" /etc/services.d/acarsdec/run
 sed -i "s/FREQ_STRING=\"\"/FREQ_STRING=\"$FREQ_STRING\"/g" /etc/services.d/acarsdec/run
 
 # Everything is good to go. Exit with 0

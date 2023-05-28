@@ -13,12 +13,24 @@ set -e
 
 ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001
-DEVICE_ID=""
+
+mapfile -t RTL_TEST_OUTPUT < <(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true)
+for RTL_TEST_OUTPUT_LINE in "${RTL_TEST_OUTPUT[@]}"; do
+        if [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]]; then
+		DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}"
+	fi
+done
+
+if [[ -z "${DEVICE_ID}" ]]; then
+        echo "Could not find Device ID for serial '$SERIAL'"
+        exit 1
+fi
+
 FREQ_STRING=""
 
 if [ -z "$GAIN" ]; then
     GAIN="-10"
-else 
+else
     GAIN="$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "$GAIN")"
 fi
 
