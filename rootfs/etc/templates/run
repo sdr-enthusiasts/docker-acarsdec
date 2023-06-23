@@ -14,6 +14,7 @@ set -e
 ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001
 SOAPYSDR=""
+
 FREQ_STRING=""
 
 if [ -z "$GAIN" ]; then
