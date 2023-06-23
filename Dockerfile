@@ -27,13 +27,11 @@ RUN set -x && \
     TEMP_PACKAGES+=(automake) && \
     TEMP_PACKAGES+=(autoconf) && \
     TEMP_PACKAGES+=(wget) && \
-#    KEPT_PACKAGES+=(nano) && \
     # install packages
     apt-get update && \
     apt-get install -y --no-install-recommends \
     "${KEPT_PACKAGES[@]}" \
     "${TEMP_PACKAGES[@]}"
-    # acarsdec
 
 RUN set -x && \
     # Deploy SoapySDR
@@ -71,11 +69,11 @@ RUN set -x && \
     make install && \
     popd && popd && \
     ldconfig && \
-
-#COPY acarsdec /src/acarsdec
-
-#RUN set -x && \
-    git clone --depth 1 --single-branch --branch master https://github.com/rpatel3001/acarsdec /src/acarsdec && \
+    # acarsdec
+    #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
+    #git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
+    #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
+    git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
     #git checkout testing && \

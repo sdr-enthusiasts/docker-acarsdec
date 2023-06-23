@@ -15,6 +15,11 @@ ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001
 SOAPYSDR=""
 
+if ! SoapySDRUtil --probe="${SOAPYSDR}"; then
+    echo "Could not find SoapySDR device for '$SOAPYSDR'"
+    exit 1
+fi
+
 FREQ_STRING=""
 
 if [ -z "$GAIN" ]; then
