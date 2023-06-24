@@ -46,8 +46,8 @@ else
 	ACARS_CMD+=("-v")
 fi
 
-if [ -n "${RATEMULT}" ]; then
-	ACARS_CMD+=("-m" "$RATEMULT")
+if [ -n "${RTLMULT}" ]; then
+	ACARS_CMD+=("-m" "$RTLMULT")
 fi
 
 if [ -n "${VERBOSE}" ]; then
