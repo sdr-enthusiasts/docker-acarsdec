@@ -22,8 +22,8 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 
 # We can only have 8 total frequencies
 
-if [[ "${#SPLIT_FREQS[@]}" -gt 8 ]]; then
-	echo "FREQUENCIES may not contain more than 8 frequencies, exiting"
+if [[ "${#SPLIT_FREQS[@]}" -gt 16 ]]; then
+	echo "FREQUENCIES may not contain more than 16 frequencies, exiting"
 	exit 1
 fi
 
@@ -34,8 +34,7 @@ for i in "${SPLIT_FREQS[@]}"
 do
 :
 if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
-	echo "FREQUENCY $i is not in the range of 118.0 - 137.0, exiting"
-	exit 1
+	echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
 fi
 FREQ_STRING+=" $i"
 done
@@ -51,43 +50,36 @@ if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
 	exit 1
 fi
 
-# SERIAL needs to be set
-if [[ -z "${SERIAL}" ]]; then
-	echo "SERIAL is not set, exiting"
-	exit 1
-fi
-
 # Make sure GAIN is valid (if set)
 if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "${GAIN}")" == "0" ]]; then
 	echo "GAIN is not valid, exiting"
 	exit 1
 fi
 
-mapfile -t RTL_TEST_OUTPUT < <(timeout 1s rtl_test -d 0 2>&1 | grep -P '^\s+\d+:\s.*?,.*?,\s+SN:\s+.*?$' | IFS=$'\n' sed -n 's/^\s*\([^:]*\):[^,]*,[^,]*,\s*SN:\s*\(.*\)$/\1,\2/; s/\s*$//p' || true)
-for RTL_TEST_OUTPUT_LINE in "${RTL_TEST_OUTPUT[@]}"; do
-        if [[ "${RTL_TEST_OUTPUT_LINE##*,}" == "$SERIAL" ]]; then
-		OUTPUT_DEVICE_ID="${RTL_TEST_OUTPUT_LINE%%,*}"
+if [[ -n "${SERIAL}" ]]; then
+	SOAPYSDR="driver=rtlsdr,serial=$SERIAL"
+fi
+
+if [[ -n "${SOAPYSDR}" ]]; then
+	if ! SoapySDRUtil --probe="${SOAPYSDR}"; then
+		echo "Could not find SoapySDR device for '$SOAPYSDR'"
+		cp /etc/templates/bad /etc/services.d/acarsdec/run
+		exit 1
+	else
+		cp /etc/templates/run /etc/services.d/acarsdec/run
 	fi
-done
-
-if [[ -z "${OUTPUT_DEVICE_ID}" ]]; then
-        echo "Could not find Device ID for serial '$SERIAL'"
-        exit 1
-fi
-
-rm -rf /etc/services.d/acarsdec/run > /dev/null 2>&1
-if [[ -n "${OUTPUT_DEVICE_ID}" ]]; then
-	cp /etc/templates/run /etc/services.d/acarsdec/run
 else
+	echo "One of SERIAL or SOAPYSDR is not set, exiting"
 	cp /etc/templates/bad /etc/services.d/acarsdec/run
+	exit 1
 fi
 
+sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/services.d/acarsdec/run
 s6-chmod 0755 /etc/services.d/acarsdec/run
 
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json
 
-# sed -i "s/DEVICE_ID=\"\"/DEVICE_ID=\"$OUTPUT_DEVICE_ID\"/g" /etc/services.d/acarsdec/run
 sed -i "s/FREQ_STRING=\"\"/FREQ_STRING=\"$FREQ_STRING\"/g" /etc/services.d/acarsdec/run
 
 # Everything is good to go. Exit with 0
