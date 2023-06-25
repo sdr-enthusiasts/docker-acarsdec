@@ -8,14 +8,11 @@ ENV DEVICE_INDEX="" \
     GAIN="-10" \
     RTLMULT="160" \
     SERIAL="" \
-    SOAPYSDR="" \
     SERVER="acarshub" \
     SERVER_PORT="5550" \
     MODE="J"
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# hadolint ignore=DL3008,SC2086,SC2039
+# hadolint ignore=DL3008,SC2086,SC2039,SC3054
 RUN set -x && \
     TEMP_PACKAGES=() && \
     KEPT_PACKAGES=() && \
@@ -31,42 +28,8 @@ RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     "${KEPT_PACKAGES[@]}" \
-    "${TEMP_PACKAGES[@]}" && \
-    # Deploy SoapySDR
-    git clone https://github.com/pothosware/SoapySDR.git /src/SoapySDR && \
-    pushd /src/SoapySDR && \
-    BRANCH_SOAPYSDR=$(git tag --sort="creatordate" | tail -1) && \
-    git checkout "$BRANCH_SOAPYSDR" && \
-    mkdir -p /src/SoapySDR/build && \
-    pushd /src/SoapySDR/build && \
-    cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
-    make all && \
-    make test && \
-    make install && \
-    popd && popd && \
-    ldconfig && \
-    # Deploy SoapyRTLTCP
-    git clone https://github.com/pothosware/SoapyRTLTCP.git /src/SoapyRTLTCP && \
-    pushd /src/SoapyRTLTCP && \
-    mkdir -p /src/SoapyRTLTCP/build && \
-    pushd /src/SoapyRTLTCP/build && \
-    cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
-    make all && \
-    make install && \
-    popd && popd && \
-    ldconfig && \
-    # Deploy SoapyRTLSDR
-    git clone https://github.com/pothosware/SoapyRTLSDR.git /src/SoapyRTLSDR && \
-    pushd /src/SoapyRTLSDR && \
-    BRANCH_SOAPYRTLSDR=$(git tag --sort="creatordate" | tail -1) && \
-    git checkout "$BRANCH_SOAPYRTLSDR" && \
-    mkdir -p /src/SoapyRTLSDR/build && \
-    pushd /src/SoapyRTLSDR/build && \
-    cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
-    make all && \
-    make install && \
-    popd && popd && \
-    ldconfig && \
+    "${TEMP_PACKAGES[@]}"\
+    && \
     # acarsdec
     #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
     #git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
@@ -78,7 +41,7 @@ RUN set -x && \
     sed -i -e 's/-march=native//' CMakeLists.txt && \
     mkdir build && \
     pushd build && \
-    cmake ../ -Dsoapy=ON -DCMAKE_BUILD_TYPE=Debug && \
+    cmake ../ -Drtl=ON -DCMAKE_BUILD_TYPE=Debug && \
     make && \
     make install && \
     popd && popd && \
@@ -86,6 +49,7 @@ RUN set -x && \
     apt-get remove -y "${TEMP_PACKAGES[@]}" && \
     apt-get autoremove -y && \
     rm -rf /src/* /tmp/* /var/lib/apt/lists/*
+
 
 COPY rootfs/ /
 
