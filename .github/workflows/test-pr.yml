@@ -10,8 +10,6 @@ on:
       - rootfs/**
       - .github/workflows/test-pr.yml
 
-permissions: write-all
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -20,6 +18,9 @@ jobs:
   deploy_ghcr_latest:
     name: Deploy Test to ghcr.io
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       # Check out our code
