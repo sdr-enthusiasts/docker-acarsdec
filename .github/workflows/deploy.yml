@@ -6,14 +6,14 @@ on:
     inputs:
       reason:
         required: true
-        description: 'Reason for running this workflow'
+        description: "Reason for running this workflow"
   # Build and deploy the image on pushes to main branch
   push:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - '**.MD'
+      - "**.md"
+      - "**.MD"
 
   # Build and deploy the image nightly (to ensure we pick up any security updates)
   # schedule:
@@ -43,7 +43,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # Check out our code
       - name: Checkout
         uses: actions/checkout@v3
@@ -81,7 +80,7 @@ jobs:
           no-cache: true
           platforms: linux/386,linux/amd64,linux/arm/v7,linux/arm/v6,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
+          tags: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest_soapy
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy_ghcr_latest_nohealthcheck:
@@ -89,7 +88,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # Check out our code
       - name: Checkout
         uses: actions/checkout@v3
@@ -132,6 +130,5 @@ jobs:
           no-cache: true
           platforms: linux/386,linux/amd64,linux/arm/v7,linux/arm/v6,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest_nohealthcheck
+          tags: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest_soapy_nohealthcheck
           labels: ${{ steps.meta.outputs.labels }}
-
