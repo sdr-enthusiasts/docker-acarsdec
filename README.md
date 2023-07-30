@@ -51,7 +51,8 @@ services:
 | Variable | Description | Required | Default |
 |----------|-------------|---------|--------|
 | `TZ` | Your timezone | No | UTC |
-| `SERIAL` | The serial number of your RTL-SDR dongle | Yes | Blank |
+| `SERIAL` | The serial number of your RTL-SDR dongle. Either this variable or `SOAPYSDR` must be set. | No | Blank |
+| `SOAPYSDR` | The device string for your SoapySDR device. Either this variable or `SERIAL` must be set. | No | Blank |
 | `FEED_ID` | Used by the decoder to insert a unique ID in to the output message | Yes | Blank |
 | `FREQUENCIES` | Colon-separated list of frequencies, but to a maximum of 8, for the decoder to list to | Yes | Blank |
 | `PPM` | Parts per million correction of the decoder | No | 0 |
