@@ -1,4 +1,4 @@
-name: Deploy to Docker Hub
+name: Deploy
 
 on:
   # Enable manual running of action if necessary
