@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 # shellcheck shell=bash
 
 # FEED_ID needs to be set
@@ -20,7 +20,7 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 
 # loop through SPLIT_FREQS
 
-# We can only have 8 total frequencies
+# We can only have 16 total frequencies
 
 if [[ "${#SPLIT_FREQS[@]}" -gt 16 ]]; then
 	echo "FREQUENCIES may not contain more than 16 frequencies, exiting"
@@ -63,24 +63,22 @@ fi
 if [[ -n "${SOAPYSDR}" ]]; then
 	if ! SoapySDRUtil --probe="${SOAPYSDR}"; then
 		echo "Could not find SoapySDR device for '$SOAPYSDR'"
-		cp /etc/templates/bad /etc/services.d/acarsdec/run
-		exit 1
+		cp /etc/templates/bad /etc/s6-overlay/scripts/acarsdec
 	else
-		cp /etc/templates/run /etc/services.d/acarsdec/run
+		cp /etc/templates/run /etc/s6-overlay/scripts/acarsdec
 	fi
 else
 	echo "One of SERIAL or SOAPYSDR is not set, exiting"
-	cp /etc/templates/bad /etc/services.d/acarsdec/run
-	exit 1
+	cp /etc/templates/bad /etc/s6-overlay/scripts/acarsdec
 fi
 
-sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/services.d/acarsdec/run
-s6-chmod 0755 /etc/services.d/acarsdec/run
+sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
+s6-chmod 0755 /etc/s6-overlay/scripts/acarsdec
 
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json
 
-sed -i "s/FREQ_STRING=\"\"/FREQ_STRING=\"$FREQ_STRING\"/g" /etc/services.d/acarsdec/run
+sed -i "s/FREQ_STRING=\"\"/FREQ_STRING=\"$FREQ_STRING\"/g" /etc/s6-overlay/scripts/acarsdec
 
 # Everything is good to go. Exit with 0
 
