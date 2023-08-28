@@ -19,13 +19,13 @@ function get_pid_of_decoder {
   unset SOAPYSDR ACARS_BIN FREQ_STRING
 
   # Get SOAPYSDR
-  eval "$(grep "SOAPYSDR=\"" "$service_dir"/run)"
+  eval "$(grep "SOAPYSDR=\"" "$service_dir")"
 
   # Get FREQS_ACARS
-  eval "$(grep "FREQ_STRING=\"" "$service_dir"/run)"
+  eval "$(grep "FREQ_STRING=\"" "$service_dir")"
 
   # Get ACARS_BIN
-  eval "$(grep "ACARS_BIN=\"" "$service_dir"/run)"
+  eval "$(grep "ACARS_BIN=\"" "$service_dir")"
 
   # Get PS output for the relevant process
   if [[ -n "$ACARS_BIN" ]]; then
