@@ -2,9 +2,9 @@ name: Cancelling Duplicates
 on:
   workflow_run:
     workflows:
-      - 'Deploy to Docker Hub'
-      - 'Linting'
-    types: ['requested']
+      - "Deploy to Docker Hub"
+      - "Linting"
+    types: ["requested"]
 
 jobs:
   cancel-duplicate-workflow-runs:
