@@ -17,11 +17,11 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "**.md"
-      - "**.MD"
-      - "**.yml"
-      - "**.yaml"
+    paths:
+      - "rust/**"
+      - "Dockerfile"
+      - "Dockerfile.build_binary"
+      - "rootfs/**"
 
 env:
   REGISTRY: ghcr.io
