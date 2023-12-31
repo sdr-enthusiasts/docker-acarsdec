@@ -58,18 +58,9 @@ fi
 
 if [[ -n "${SERIAL}" ]]; then
 	SOAPYSDR="driver=rtlsdr,serial=$SERIAL"
-fi
-
-if [[ -n "${SOAPYSDR}" ]]; then
-	if ! SoapySDRUtil --probe="${SOAPYSDR}"; then
-		echo "Could not find SoapySDR device for '$SOAPYSDR'"
-		cp /etc/templates/bad /etc/s6-overlay/scripts/acarsdec
-	else
-		cp /etc/templates/run /etc/s6-overlay/scripts/acarsdec
-	fi
-else
+elif [[ -n "${SOAPYSDR}" ]]; then
 	echo "One of SERIAL or SOAPYSDR is not set, exiting"
-	cp /etc/templates/bad /etc/s6-overlay/scripts/acarsdec
+	exit 1
 fi
 
 sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
