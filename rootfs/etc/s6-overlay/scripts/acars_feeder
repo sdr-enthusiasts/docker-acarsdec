@@ -22,6 +22,6 @@ if [[ ! ${QUIET_LOGS,,} =~ true ]]; then
 fi
 
 # shellcheck disable=SC2016
-"${s6wrap[@]}" socat -d TCP:127.0.0.1:15550 "$SERVER_ADDR"
+socat -d TCP:127.0.0.1:15550 "$SERVER_ADDR"
 
 sleep 5
