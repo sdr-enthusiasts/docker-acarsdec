@@ -1,15 +1,8 @@
 #!/command/with-contenv bash
 #shellcheck shell=bash
 
-# shellcheck disable=SC1091
-source /scripts/common
-
-set -o pipefail
-set -e
-
 # Listens for the output of acarsdec (UDP), and makes it available for multiple processes at TCP port 15550
-# shellcheck disable=SC2016
-# shellcheck disable=SC2154
-"${s6wrap[@]}" socat -u udp-listen:5550,fork stdout | ncat -4 --keep-open --listen 0.0.0.0 15550
+
+socat -u udp-listen:5550,fork stdout | ncat -4 --keep-open --listen 0.0.0.0 15550
 
 sleep 5
