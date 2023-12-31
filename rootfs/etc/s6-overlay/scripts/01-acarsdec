@@ -73,7 +73,6 @@ else
 fi
 
 sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
-s6-chmod 0755 /etc/s6-overlay/scripts/acarsdec
 
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json

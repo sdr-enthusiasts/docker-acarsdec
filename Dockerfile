@@ -27,11 +27,27 @@ RUN set -x && \
     TEMP_PACKAGES+=(automake) && \
     TEMP_PACKAGES+=(autoconf) && \
     TEMP_PACKAGES+=(wget) && \
+    TEMP_PACKAGES+=(libusb-1.0-0-dev) && \
+    KEPT_PACKAGES+=(libusb-1.0-0) && \
     # install packages
     apt-get update && \
     apt-get install -y --no-install-recommends \
     "${KEPT_PACKAGES[@]}" \
     "${TEMP_PACKAGES[@]}" && \
+    # install sdrplay
+    curl --location --output /tmp/install_sdrplay.sh https://raw.githubusercontent.com/sdr-enthusiasts/install-libsdrplay/main/install_sdrplay.sh && \
+    chmod +x /tmp/install_sdrplay.sh && \
+    /tmp/install_sdrplay.sh && \
+    # deploy airspyone host
+    git clone https://github.com/airspy/airspyone_host.git /src/airspyone_host && \
+    pushd /src/airspyone_host && \
+    mkdir -p /src/airspyone_host/build && \
+    pushd /src/airspyone_host/build && \
+    cmake ../ -DINSTALL_UDEV_RULES=ON && \
+    make && \
+    make install && \
+    ldconfig && \
+    popd && popd && \
     # Deploy SoapySDR
     git clone https://github.com/pothosware/SoapySDR.git /src/SoapySDR && \
     pushd /src/SoapySDR && \
@@ -67,9 +83,29 @@ RUN set -x && \
     make install && \
     popd && popd && \
     ldconfig && \
+    # install sdrplay support for soapy
+    git clone https://github.com/pothosware/SoapySDRPlay.git /src/SoapySDRPlay && \
+    pushd /src/SoapySDRPlay && \
+    mkdir build && \
+    pushd build && \
+    cmake .. && \
+    make && \
+    make install && \
+    popd && \
+    popd && \
+    ldconfig && \
+    # Deploy Airspy
+    git clone https://github.com/pothosware/SoapyAirspy.git /src/SoapyAirspy && \
+    pushd /src/SoapyAirspy && \
+    mkdir build && \
+    pushd build && \
+    cmake .. && \
+    make    && \
+    make install   && \
+    popd && \
+    popd && \
+    ldconfig && \
     # acarsdec
-    #git clone https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
-    #git clone --single-branch --branch testing https://github.com/airframesio/acarsdec.git /src/acarsdec && \
     #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
     git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
     pushd /src/acarsdec && \
@@ -78,7 +114,7 @@ RUN set -x && \
     sed -i -e 's/-march=native//' CMakeLists.txt && \
     mkdir build && \
     pushd build && \
-    cmake ../ -Dsoapy=ON -DCMAKE_BUILD_TYPE=Debug && \
+    cmake ../ -DCMAKE_BUILD_TYPE=Debug -Drtl=OFF -Dsdrplay=OFF -Dairspy=OFF -Dsoapy=ON && \
     make && \
     make install && \
     popd && popd && \
