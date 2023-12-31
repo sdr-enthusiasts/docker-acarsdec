@@ -1,17 +1,21 @@
 #!/command/with-contenv bash
 # shellcheck shell=bash
 
+# shellcheck disable=SC1091
+source /scripts/common
+
 # FEED_ID needs to be set
 
 if [[ -z "${FEED_ID}" ]]; then
-	echo "FEED_ID is not set, exiting"
+	# shellcheck disable=SC2154
+	"${s6wrap[@]}" echo "FEED_ID is not set, exiting"
 	exit 1
 fi
 
 # FREQUENCIES needs to be set
 
 if [[ -z "${FREQUENCIES}" ]]; then
-	echo "FREQUENCIES is not set, exiting"
+	"${s6wrap[@]}" echo "FREQUENCIES is not set, exiting"
 	exit 1
 fi
 
@@ -23,7 +27,7 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 # We can only have 16 total frequencies
 
 if [[ "${#SPLIT_FREQS[@]}" -gt 16 ]]; then
-	echo "FREQUENCIES may not contain more than 16 frequencies, exiting"
+	"${s6wrap[@]}" echo "FREQUENCIES may not contain more than 16 frequencies, exiting"
 	exit 1
 fi
 
@@ -34,46 +38,36 @@ for i in "${SPLIT_FREQS[@]}"
 do
 :
 if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
-	echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
+	"${s6wrap[@]}" echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
 fi
 FREQ_STRING+=" $i"
 done
 
 # Make sure mode is valid
 if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
-	echo "MODE is not valid, exiting"
+	"${s6wrap[@]}" echo "MODE is not valid, exiting"
 	exit 1
 fi
 
 if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
-	echo "SERVER is set but SERVER_PORT is not set, exiting"
+	"${s6wrap[@]}" echo "SERVER is set but SERVER_PORT is not set, exiting"
 	exit 1
 fi
 
 # Make sure GAIN is valid (if set)
 if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "${GAIN}")" == "0" ]]; then
-	echo "GAIN is not valid, exiting"
+	"${s6wrap[@]}" echo "GAIN is not valid, exiting"
 	exit 1
 fi
 
 if [[ -n "${SERIAL}" ]]; then
 	SOAPYSDR="driver=rtlsdr,serial=$SERIAL"
-fi
-
-if [[ -n "${SOAPYSDR}" ]]; then
-	if ! SoapySDRUtil --probe="${SOAPYSDR}"; then
-		echo "Could not find SoapySDR device for '$SOAPYSDR'"
-		cp /etc/templates/bad /etc/s6-overlay/scripts/acarsdec
-	else
-		cp /etc/templates/run /etc/s6-overlay/scripts/acarsdec
-	fi
-else
-	echo "One of SERIAL or SOAPYSDR is not set, exiting"
-	cp /etc/templates/bad /etc/s6-overlay/scripts/acarsdec
+elif [[ -n "${SOAPYSDR}" ]]; then
+	"${s6wrap[@]}" echo "One of SERIAL or SOAPYSDR is not set, exiting"
+	exit 1
 fi
 
 sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
-s6-chmod 0755 /etc/s6-overlay/scripts/acarsdec
 
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json

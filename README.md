@@ -8,7 +8,7 @@
 
 Docker container for running [airframe's fork of acarsdec](https://github.com/airframesio/acarsdec) and forwarding the received JSON messages to another system or docker container. Best used alongside [ACARS Hub](https://github.com/fredclausen/acarshub).
 
-Builds and runs on `amd64`, `arm64`, `arm/v7`, `arm/v6` and `386` architectures.
+Builds and runs on `amd64`, `arm64`, `arm/v7`.
 
 ## Note for Users running 32-bit Debian Buster-based OSes on ARM
 
@@ -20,7 +20,11 @@ A computer host on a suitable architecture and one USB RTL-SDR dongle connected 
 
 ## ACARS Hub integration
 
-The default `SERVER` and `SERVER_PORT` values are suitable for automatically working with ACARS Hub, provided ACARS Hub is **on the same pi as the decoder**. If ACARS Hub is not on the same Pi, please provide the correct host name in the `SERVER` variable. Very likely you will not have to change the `SERVER_PORT`, but if you did change the port mapping on your ACARS Hub (and you will know if you did) please set the server port correctly as well.
+The default `SERVER` and `SERVER_PORT` values are suitable for automatically working with ACARS Hub, provided ACARS Hub is **on the same pi as the decoder**. If ACARS Hub is not on the same Pi, please provide the correct host name in the `SERVER` variable. Very likely you will not have to change the `SERVER_PORT`, but if you did change the port mapping on ACARS Router (and you will know if you did) please set the server port correctly as well.
+
+## Deprecation Notice
+
+`SERIAL` has been deprecated in favor of `SOAPYSDR`. Please update your configuration accordingly. If `SERIAL` is set the driver will be set to `rtlsdr` and the serial number will be set to the value of `SERIAL`.
 
 ## Up and running
 
@@ -51,8 +55,7 @@ services:
 | Variable      | Description                                                                                                                                                                      | Required | Default            |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------ |
 | `TZ`          | Your timezone                                                                                                                                                                    | No       | UTC                |
-| `SERIAL`      | The serial number of your RTL-SDR dongle. Either this variable or `SOAPYSDR` must be set.                                                                                        | No       | Blank              |
-| `SOAPYSDR`    | The device string for your SoapySDR device. Either this variable or `SERIAL` must be set.                                                                                        | No       | Blank              |
+| `SOAPYSDR`    | The SoapySDR device string that identifies your dongle. See below for supported soapy sdr types.                                                                                 | No       | Blank              |
 | `FEED_ID`     | Used by the decoder to insert a unique ID in to the output message                                                                                                               | Yes      | Blank              |
 | `FREQUENCIES` | Colon-separated list of frequencies, but to a maximum of 8, for the decoder to list to                                                                                           | Yes      | Blank              |
 | `PPM`         | Parts per million correction of the decoder                                                                                                                                      | No       | 0                  |
@@ -61,3 +64,14 @@ services:
 | `SERVER_PORT` | The port where the server will receive messages on.                                                                                                                              | No       | `5550`             |
 | `MODE`        | The output mode. `P` for planeplotter, `J` for JSON and `A` for acarsdec.                                                                                                        | No       | `J`                |
 | `QUIET_LOGS`  | Mute log output to the bare minimum. Set to `false` to see all of the log messages.                                                                                              | No       | `TRUE`             |
+
+## SoapySDR device string
+
+The SoapySDR device string is used to identify your RTL-SDR dongle. The default value is `driver=rtlsdr` which is suitable for most users. If you are using a different SDR, you will need to provide the correct device string. For example, if you are using an Airspy Mini, you would set `SOAPYSDR=driver=airspy`. Pass any additional options for the SDR in via this option as well.
+
+Supported Soapy Drivers:
+
+- `rtlsdr`
+- `rtltcp`
+- `airspy`
+- `sdrplay`
