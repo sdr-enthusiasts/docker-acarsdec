@@ -81,44 +81,6 @@ for service_dir in /etc/s6-overlay/scripts/*; do
 
 done
 
-# ===== Check acars_server, acars_feeder, acars_stats processes =====
-
-echo "==== Checking acars_server ====="
-
-# Check acars_server is listening for TCP on 127.0.0.1:15550
-acars_pidof_acars_tcp_server=$(pgrep -f 'ncat -4 --keep-open --listen 0.0.0.0 15550')
-if ! check_tcp4_socket_listening_for_pid "0.0.0.0" "15550" "${acars_pidof_acars_tcp_server}"; then
-    echo "acars_server TCP not listening on port 15550 (pid $acars_pidof_acars_tcp_server): UNHEALTHY"
-    EXITCODE=1
-else
-    echo "acars_server TCP listening on port 15550 (pid $acars_pidof_acars_tcp_server): HEALTHY"
-fi
-
-echo "==== Checking acars_stats ====="
-
-# Check acars_stats:
-acars_pidof_acars_stats=$(pgrep -fx 'socat -u TCP:127.0.0.1:15550 CREATE:/run/acars/acars.past5min.json')
-
-# Ensure TCP connection to acars_server at 127.0.0.1:15550
-if ! check_tcp4_connection_established_for_pid "127.0.0.1" "ANY" "127.0.0.1" "15550" "${acars_pidof_acars_stats}"; then
-echo "acars_stats (pid $acars_pidof_acars_stats) not connected to acars_server (pid $acars_pidof_acars_tcp_server) at 127.0.0.1:15550: UNHEALTHY"
-EXITCODE=1
-else
-echo "acars_stats (pid $acars_pidof_acars_stats) connected to acars_server (pid $acars_pidof_acars_tcp_server) at 127.0.0.1:15550: HEALTHY"
-fi
-
-echo "==== Check for ACARS activity ====="
-
-# Check for activity
-# read .json files, ensure messages received in past hour
-acars_num_msgs_past_hour=$(find /run/acars -type f -name 'acars.*.json' -cmin -60 -exec cat {} \; | wc -l)
-if [[ "$acars_num_msgs_past_hour" -gt 0 ]]; then
-    echo "$acars_num_msgs_past_hour ACARS messages received in past hour: HEALTHY"
-else
-    echo "$acars_num_msgs_past_hour ACARS messages received in past hour: UNHEALTHY"
-    EXITCODE=1
-fi
-
 echo "==== Check Service Death Tallies ====="
 
 # Check service death tally
