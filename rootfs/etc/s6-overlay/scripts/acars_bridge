@@ -27,7 +27,7 @@ fi
 
 ACARS_BRIDGE_BIN="/opt/acars-bridge"
 ACARS_BRIDGE_CMD=(--source-port "$SOURCE_PORT")
-ACARS_BRIDGE_CMD=(--source-protocol "udp")
+ACARS_BRIDGE_CMD+=(--source-protocol "udp")
 ACARS_BRIDGE_CMD+=(--source-host "127.0.0.1")
 
 if [[ -n "$OUTPUT_SERVER" ]]; then
