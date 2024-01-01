@@ -20,7 +20,7 @@ fi
 
 # detect legacy udp
 if [[ "$OUTPUT_SERVER_MODE" == "udp" ]]; then
-  "${s6wrap[@]}" echo "[WARN] Using UDP mode to connect to $OUTPUT_SERVER:$OUTPUT_SERVER_PORT. Suggest switching to ZMQ Mode. Please see documentation for more information."
+  "${s6wrap[@]}" echo "[WARN] Using UDP mode to connect to $OUTPUT_SERVER:$OUTPUT_SERVER_PORT. Suggest switching to TCP or ZMQ Mode. Please see documentation for more information."
 fi
 
 SOURCE_PORT=5550
