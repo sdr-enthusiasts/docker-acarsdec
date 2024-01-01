@@ -42,16 +42,16 @@ if [ -n "${VERBOSE}" ]; then
 	ACARS_CMD+=("-v")
 fi
 
-# Send output JSON to acars_server
-if [ -n "${SERVER}" ]; then
-	if [[ "${MODE}" == @(J|j) ]]; then
-		ACARS_CMD+=("-j" "127.0.0.1:5550")
-	elif [[ "${MODE}" == @(P|p) ]]; then
-		ACARS_CMD+=("-n" "127.0.0.1:5550")
-	elif [[ "${MODE}" == @(A|a) ]]; then
-		ACARS_CMD+=("-N" "127.0.0.1:5550")
-	fi
+# Send output JSON to acars-bridge
+
+if [[ "${MODE}" == @(J|j) ]]; then
+	ACARS_CMD+=("-j" "127.0.0.1:5550")
+elif [[ "${MODE}" == @(P|p) ]]; then
+	ACARS_CMD+=("-n" "127.0.0.1:5550")
+elif [[ "${MODE}" == @(A|a) ]]; then
+	ACARS_CMD+=("-N" "127.0.0.1:5550")
 fi
+
 
 # Specify SOAPYSDR
 if [ -n "${SOAPYSDR}" ]; then
