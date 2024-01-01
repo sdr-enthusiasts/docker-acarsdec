@@ -45,6 +45,7 @@ services:
       - SERIAL=13305
       - FEED_ID=ACARS
       - FREQUENCIES=130.025;130.450;131.125;131.550
+      - OUTPUT_SERVER_MODE=tcp
     tmpfs:
       - /run:exec,size=64M
       - /var/log
