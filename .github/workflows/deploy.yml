@@ -12,6 +12,11 @@ on:
         type: boolean
         description: "Use base image testpr"
         default: false
+      build_latest_as_test:
+        required: false
+        type: boolean
+        description: "Build latest as test"
+        default: false
 
   # Build and deploy the image on pushes to main branch
   push:
@@ -46,6 +51,9 @@ jobs:
           echo "Use test image: $INPUTS_USE_TEST_IMAGE"
   build_and_push:
     name: Image Build & Push
+    if: |
+      github.event.inputs.build_latest_as_test == 'false' ||
+      github.event.inputs.build_latest_as_test == ''
     uses: sdr-enthusiasts/common-github-workflows/.github/workflows/build_and_push_image.yml@main
     with:
       push_enabled: true
@@ -62,6 +70,31 @@ jobs:
       build_version_specific: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '' }}
       build_platform_specific: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '' }}
       build_nohealthcheck: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '' }}
+      build_baseimage_url: :acars-decoder/:acars-decoder-test-pr
+    secrets:
+      ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy_test:
+    name: Deploy as test
+    if: |
+      github.event.inputs.build_latest_as_test == 'true' &&
+      (github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '')
+    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/build_and_push_image.yml@main
+    with:
+      push_enabled: true
+      push_destinations: ghcr.io
+      ghcr_repo_owner: ${{ github.repository_owner }}
+      ghcr_repo: ${{ github.repository }}
+      build_with_tmpfs: true
+      get_version_method: git_commit_hash_short
+      # set build_latest to true if github.event.inputs.use_test_image is false
+      build_latest: true
+      docker_latest_tag: test
+      build_baseimage_test: false
+      # only build the entire stack if we are not using the test image
+      build_version_specific: false
+      build_platform_specific: false
+      build_nohealthcheck: false
       build_baseimage_url: :acars-decoder/:acars-decoder-test-pr
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
