@@ -78,7 +78,7 @@ if [[ ${QUIET_LOGS,,} =~ true ]]; then
 	# shellcheck disable=SC2016
 	"${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}" 2>&1 | \
 	stdbuf -oL sed --unbuffered '/^$/d' | \
-	stdbuf -oL awk '! /^dumpvdl2/' | \
+	stdbuf -oL awk '! /^acarsdec/' | \
 	stdbuf -oL awk '! /^Sampling rate set/' | \
 	stdbuf -oL awk '! /^Found \[0-9]+ device(s):/' | \
 	stdbuf -oL awk '! /^  [0-9]+/' | \
