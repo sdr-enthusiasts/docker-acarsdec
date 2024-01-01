@@ -10,20 +10,14 @@ SOURCE_PORT=5550
 
 # lets see if legacy SERVER / SERVER_PORT are set
 
-if [[ -n "$SERVER" ]] || [[ -n "$SERVER_PORT" ]]; then
- "${s6wrap[@]}" echo "[WARN] SERVER / SERVER_PORT are deprecated, please use OUTPUT_SERVER / OUTPUT_SERVER_PORT instead"
-
-  if [[ -n "$SERVER" ]]; then
-    OUTPUT_SERVER="$SERVER"
-  fi
-
-  if [[ -n "$SERVER_PORT" ]]; then
-    OUTPUT_SERVER_PORT="$SERVER_PORT"
-  fi
+if [[ -n "$SERVER" ]]; then
+  "${s6wrap[@]}" echo "[WARN] SERVER is deprecated, please use OUTPUT_SERVER"
+  OUTPUT_SERVER="$SERVER"
 fi
 
-if [[ -z "$OUTPUT_SERVER_MODE" ]]; then
-  OUTPUT_SERVER_MODE="udp"
+if [[ -n "$SERVER_PORT" ]]; then
+  "${s6wrap[@]}" echo "[WARN] SERVER_PORT is deprecated, please use OUTPUT_SERVER_PORT"
+  OUTPUT_SERVER_PORT="$SERVER_PORT"
 fi
 
 # detect legacy udp
