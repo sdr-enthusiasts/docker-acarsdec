@@ -60,8 +60,9 @@ services:
 | `FREQUENCIES`            | Colon-separated list of frequencies, but to a maximum of 8, for the decoder to list to                                                                                           | Yes      | Blank              |
 | `PPM`                    | Parts per million correction of the decoder                                                                                                                                      | No       | 0                  |
 | `GAIN`                   | The gain applied to the RTL-SDR dongle. Recommended to leave at the default autogain. To set manually, gain in in db (0 to 49.6; >52 and -10 will result in AGC; default is AGC) | No       | `-10` for autogain |
-| `SERVER`                 | The server where messages will be forwarded to.                                                                                                                                  | No       | Blank              |
-| `SERVER_PORT`            | The port where the server will receive messages on.                                                                                                                              | No       | `5550`             |
+| `OUTPUT_SERVER`          | The server where messages will be forwarded to.                                                                                                                                  | No       | `acars_router`     |
+| `OUTPUT_SERVER_PORT`     | The port where the server will receive messages on.                                                                                                                              | No       | `5550`             |
+| `OUTPUT_SERVER_MODE`     | The output mode. `udp`, `tcp` and `zmq` are valid                                                                                                                                | No       | `udp`              |
 | `MODE`                   | The output mode. `P` for planeplotter, `J` for JSON and `A` for acarsdec.                                                                                                        | No       | `J`                |
 | `QUIET_LOGS`             | Mute log output to the bare minimum. Set to `false` to see all of the log messages.                                                                                              | No       | `TRUE`             |
 | `ACARSDEC_COMMAND_EXTRA` | Additional arguments to pass to the decoder.                                                                                                                                     | No       | Blank              |
@@ -76,3 +77,17 @@ Supported Soapy Drivers:
 - `rtltcp`
 - `airspy`
 - `sdrplay`
+
+## Output modes
+
+TL;DR: No change to your setup is necessary for continued functionality, but you should update your configuration to use the new variables and at least use TCP.
+
+A recent change in the container has meant we are migrating from `SERVER`/`SERVER_PORT` to `OUTPUT_SERVER`/`OUTPUT_SERVER_PORT`. The old variables will continue to work for the time being, but please update your configuration to use the new variables. Simply replace `SERVER` with `OUTPUT_SERVER` and `SERVER_PORT` with `OUTPUT_SERVER_PORT`. If you do not have `SERVER`/`SERVER_PORT` set, you do not need to do anything and it will work as it did before.
+
+Generally speaking for a proper migration, whatever your `SERVER` was before should be set in your compose as `OUTPUT_SERVER` and whatever your `SERVER_PORT` was before should be set as `OUTPUT_SERVER_PORT`. If `SERVER` was not set, you do not have to add in `OUTPUT_SERVER`. If you did not have `SERVER_PORT` set in your compose, you do not have to add in `OUTPUT_SERVER_PORT` unless you want to use `zmq`.
+
+Additionally, the `OUTPUT_SERVER_MODE` variable has been added to allow for the output mode to be set. The default is `udp` and the container will function as it did before. `tcp` and `zmq` are also valid options and recommended over `udp` for reliability.
+
+To use `tcp` with `acars_router` with the default ports it would have mapped, simply set `OUTPUT_SERVER_MODE=tcp` and leave the `OUTPUT_SERVER_PORT` as `5550` or unset.
+
+If you wish to use `zmq` with `acars_router` with the default ports it would have mapped, simply set `OUTPUT_SERVER_MODE=zmq` and set `OUTPUT_SERVER_PORT` as `35550`.
