@@ -26,7 +26,7 @@ if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
 fi
 
-if [ -n "${SERVER}" ]; then
+if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
 	ACARS_CMD+=("-o" "0")
 	ACARS_CMD+=("-l" "/dev/null")
 else
@@ -60,10 +60,6 @@ fi
 
 if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
 	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
-fi
-
-if [[ ${QUIET_LOGS,,} =~ true ]]; then
-	ACARS_CMD+=("-l" "/dev/null")
 fi
 
 # shellcheck disable=SC2206
