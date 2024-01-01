@@ -82,7 +82,7 @@ Supported Soapy Drivers:
 
 TL;DR: No change to your setup is necessary for continued functionality, but you should update your configuration to use the new variables and at least use TCP.
 
-A recent change in the container has meant we are migrating from `SERVER`/`SERVER_PORT` to `OUTPUT_SERVER`/`OUTPUT_SERVER_PORT`. The old variables will continue to work for the time being, but please update your configuration to use the new variables. Simply replace `SERVER` with `OUTPUT_SERVER` and `SERVER_PORT` with `OUTPUT_SERVER_PORT`. If you do not have `SERVER`/`SERVER_PORT` set, you do not need to do anything and it will work as it did before.
+A recent change in the container has meant we are migrating from `SERVER`/`SERVER_PORT` to `OUTPUT_SERVER`/`OUTPUT_SERVER_PORT` as a better name for what the variable is representing. The old variables will continue to work for the time being, but please update your configuration to use the new variables. Simply replace `SERVER` with `OUTPUT_SERVER` and `SERVER_PORT` with `OUTPUT_SERVER_PORT`. If you do not have `SERVER`/`SERVER_PORT` set, you do not need to do anything and it will work as it did before.
 
 Generally speaking for a proper migration, whatever your `SERVER` was before should be set in your compose as `OUTPUT_SERVER` and whatever your `SERVER_PORT` was before should be set as `OUTPUT_SERVER_PORT`. If `SERVER` was not set, you do not have to add in `OUTPUT_SERVER`. If you did not have `SERVER_PORT` set in your compose, you do not have to add in `OUTPUT_SERVER_PORT` unless you want to use `zmq`.
 
