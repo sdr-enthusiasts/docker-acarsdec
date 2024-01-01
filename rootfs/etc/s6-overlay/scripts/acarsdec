@@ -69,6 +69,10 @@ if [ -n "${SOAPYSDR}" ]; then
 	ACARS_CMD+=("-d" "$SOAPYSDR")
 fi
 
+if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
+	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
+fi
+
 # shellcheck disable=SC2206
 ACARS_CMD+=($FREQ_STRING)
 

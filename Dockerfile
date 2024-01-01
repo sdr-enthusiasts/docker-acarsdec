@@ -1,3 +1,15 @@
+#build acars-bridge
+FROM rust:1.75.0 as builder
+WORKDIR /tmp/acars-bridge
+# hadolint ignore=DL3008,DL3003,SC1091
+RUN set -x && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends libzmq3-dev
+
+RUN set -x && \
+    git clone https://github.com/sdr-enthusiasts/acars-bridge.git . && \
+    cargo build --release
+
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
 
 ENV DEVICE_INDEX="" \
@@ -9,8 +21,9 @@ ENV DEVICE_INDEX="" \
     RTLMULT="160" \
     SERIAL="" \
     SOAPYSDR="" \
-    SERVER="acarshub" \
-    SERVER_PORT="5550" \
+    OUTPUT_SERVER="acars_router" \
+    OUTPUT_SERVER_PORT="5550" \
+    OUTPUT_SERVER_MODE="udp" \
     MODE="J"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -29,6 +42,7 @@ RUN set -x && \
     TEMP_PACKAGES+=(wget) && \
     TEMP_PACKAGES+=(libusb-1.0-0-dev) && \
     KEPT_PACKAGES+=(libusb-1.0-0) && \
+    KEPT_PACKAGES+=(libzmq5) && \
     # install packages
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -124,6 +138,7 @@ RUN set -x && \
     rm -rf /src/* /tmp/* /var/lib/apt/lists/*
 
 COPY rootfs/ /
+COPY --from=builder /tmp/acars-bridge/target/release/acars-bridge /opt/acars-bridge
 
 # ENTRYPOINT [ "/init" ]
 

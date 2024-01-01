@@ -52,18 +52,19 @@ services:
 
 ## Configuration options
 
-| Variable      | Description                                                                                                                                                                      | Required | Default            |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------ |
-| `TZ`          | Your timezone                                                                                                                                                                    | No       | UTC                |
-| `SOAPYSDR`    | The SoapySDR device string that identifies your dongle. See below for supported soapy sdr types.                                                                                 | No       | Blank              |
-| `FEED_ID`     | Used by the decoder to insert a unique ID in to the output message                                                                                                               | Yes      | Blank              |
-| `FREQUENCIES` | Colon-separated list of frequencies, but to a maximum of 8, for the decoder to list to                                                                                           | Yes      | Blank              |
-| `PPM`         | Parts per million correction of the decoder                                                                                                                                      | No       | 0                  |
-| `GAIN`        | The gain applied to the RTL-SDR dongle. Recommended to leave at the default autogain. To set manually, gain in in db (0 to 49.6; >52 and -10 will result in AGC; default is AGC) | No       | `-10` for autogain |
-| `SERVER`      | The server where messages will be forwarded to.                                                                                                                                  | No       | Blank              |
-| `SERVER_PORT` | The port where the server will receive messages on.                                                                                                                              | No       | `5550`             |
-| `MODE`        | The output mode. `P` for planeplotter, `J` for JSON and `A` for acarsdec.                                                                                                        | No       | `J`                |
-| `QUIET_LOGS`  | Mute log output to the bare minimum. Set to `false` to see all of the log messages.                                                                                              | No       | `TRUE`             |
+| Variable                 | Description                                                                                                                                                                      | Required | Default            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------ |
+| `TZ`                     | Your timezone                                                                                                                                                                    | No       | UTC                |
+| `SOAPYSDR`               | The SoapySDR device string that identifies your dongle. See below for supported soapy sdr types.                                                                                 | No       | Blank              |
+| `FEED_ID`                | Used by the decoder to insert a unique ID in to the output message                                                                                                               | Yes      | Blank              |
+| `FREQUENCIES`            | Colon-separated list of frequencies, but to a maximum of 8, for the decoder to list to                                                                                           | Yes      | Blank              |
+| `PPM`                    | Parts per million correction of the decoder                                                                                                                                      | No       | 0                  |
+| `GAIN`                   | The gain applied to the RTL-SDR dongle. Recommended to leave at the default autogain. To set manually, gain in in db (0 to 49.6; >52 and -10 will result in AGC; default is AGC) | No       | `-10` for autogain |
+| `SERVER`                 | The server where messages will be forwarded to.                                                                                                                                  | No       | Blank              |
+| `SERVER_PORT`            | The port where the server will receive messages on.                                                                                                                              | No       | `5550`             |
+| `MODE`                   | The output mode. `P` for planeplotter, `J` for JSON and `A` for acarsdec.                                                                                                        | No       | `J`                |
+| `QUIET_LOGS`             | Mute log output to the bare minimum. Set to `false` to see all of the log messages.                                                                                              | No       | `TRUE`             |
+| `ACARSDEC_COMMAND_EXTRA` | Additional arguments to pass to the decoder.                                                                                                                                     | No       | Blank              |
 
 ## SoapySDR device string
 
