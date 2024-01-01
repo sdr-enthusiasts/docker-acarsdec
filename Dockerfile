@@ -8,7 +8,13 @@ RUN set -x && \
 
 RUN set -x && \
     git clone https://github.com/sdr-enthusiasts/acars-bridge.git . && \
-    cargo build --release
+    cargo build --release && \
+    # clean up the apt-cache
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    cp /tmp/acars-bridge/target/release/acars-bridge . && \
+    cargo clean
+
 
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
 
@@ -62,6 +68,8 @@ RUN set -x && \
     make install && \
     ldconfig && \
     popd && popd && \
+    # remove the source code
+    rm -rf /src/airspyone_host && \
     # Deploy SoapySDR
     git clone https://github.com/pothosware/SoapySDR.git /src/SoapySDR && \
     pushd /src/SoapySDR && \
@@ -75,6 +83,8 @@ RUN set -x && \
     make install && \
     popd && popd && \
     ldconfig && \
+    # remove the source code
+    rm -rf /src/SoapySDR && \
     # Deploy SoapyRTLTCP
     git clone https://github.com/pothosware/SoapyRTLTCP.git /src/SoapyRTLTCP && \
     pushd /src/SoapyRTLTCP && \
@@ -85,6 +95,8 @@ RUN set -x && \
     make install && \
     popd && popd && \
     ldconfig && \
+    # remove the source code
+    rm -rf /src/SoapyRTLTCP && \
     # Deploy SoapyRTLSDR
     git clone https://github.com/pothosware/SoapyRTLSDR.git /src/SoapyRTLSDR && \
     pushd /src/SoapyRTLSDR && \
@@ -97,6 +109,8 @@ RUN set -x && \
     make install && \
     popd && popd && \
     ldconfig && \
+    # remove the source code
+    rm -rf /src/SoapyRTLSDR && \
     # install sdrplay support for soapy
     git clone https://github.com/pothosware/SoapySDRPlay.git /src/SoapySDRPlay && \
     pushd /src/SoapySDRPlay && \
@@ -108,6 +122,8 @@ RUN set -x && \
     popd && \
     popd && \
     ldconfig && \
+    # remove the source code
+    rm -rf /src/SoapySDRPlay && \
     # Deploy Airspy
     git clone https://github.com/pothosware/SoapyAirspy.git /src/SoapyAirspy && \
     pushd /src/SoapyAirspy && \
@@ -119,6 +135,8 @@ RUN set -x && \
     popd && \
     popd && \
     ldconfig && \
+    # remove the source code
+    rm -rf /src/SoapyAirspy && \
     # acarsdec
     #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
     git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
@@ -138,7 +156,7 @@ RUN set -x && \
     rm -rf /src/* /tmp/* /var/lib/apt/lists/*
 
 COPY rootfs/ /
-COPY --from=builder /tmp/acars-bridge/target/release/acars-bridge /opt/acars-bridge
+COPY --from=builder /tmp/acars-bridge/acars-bridge /opt/acars-bridge
 
 # ENTRYPOINT [ "/init" ]
 
