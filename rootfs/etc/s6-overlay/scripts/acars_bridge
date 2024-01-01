@@ -10,12 +10,12 @@ SOURCE_PORT=5550
 
 # lets see if legacy SERVER / SERVER_PORT are set
 
-if [[ -n "$SERVER" ]]; then
+if [[ -n "$SERVER" ]] && [[ -z "$OUTPUT_SERVER" ]]; then
   "${s6wrap[@]}" echo "[WARN] SERVER is deprecated, please use OUTPUT_SERVER"
   OUTPUT_SERVER="$SERVER"
 fi
 
-if [[ -n "$SERVER_PORT" ]]; then
+if [[ -n "$SERVER_PORT" ]] && [[ -z "$OUTPUT_SERVER_PORT" ]]; then
   "${s6wrap[@]}" echo "[WARN] SERVER_PORT is deprecated, please use OUTPUT_SERVER_PORT"
   OUTPUT_SERVER_PORT="$SERVER_PORT"
 fi
