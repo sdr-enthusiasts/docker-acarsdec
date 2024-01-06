@@ -50,6 +50,7 @@ RUN set -x && \
     /rename_current_arch_binary.sh && \
     rm -fv \
     /opt/acars-bridge.* \
+    && \
     # install sdrplay
     curl --location --output /tmp/install_sdrplay.sh https://raw.githubusercontent.com/sdr-enthusiasts/install-libsdrplay/main/install_sdrplay.sh && \
     chmod +x /tmp/install_sdrplay.sh && \
