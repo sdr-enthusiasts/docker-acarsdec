@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
-          repository: sdre-enthusiasts/acars-bridge
+          repository: sdr-enthusiasts/acars-bridge
 
       - name: Run Docker on tmpfs
         uses: JonasAlfredsson/docker-on-tmpfs@v1
@@ -100,7 +100,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
-          repository: sdre-enthusiasts/acars-bridge
+          repository: sdr-enthusiasts/acars-bridge
 
       - name: Run Docker on tmpfs
         uses: JonasAlfredsson/docker-on-tmpfs@v1
@@ -141,7 +141,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
-          repository: sdre-enthusiasts/acars-bridge
+          repository: sdr-enthusiasts/acars-bridge
 
       - name: Run Docker on tmpfs
         uses: JonasAlfredsson/docker-on-tmpfs@v1
