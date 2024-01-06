@@ -16,9 +16,9 @@ ENV DEVICE_INDEX="" \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY ./rootfs /
-COPY ./bin/acars-bride.armv7/acars-bridge /opt/acars_bridge.armv7
-COPY ./bin/acars_bridge.arm64/acars-bridge /opt/acars_bridge.arm64
-COPY ./bin/acars_bridge.amd64/acars-bridge /opt/acars_bridge.amd64
+COPY ./bin/acars-bride.armv7/acars-bridge /opt/acars-bridge.armv7
+COPY ./bin/acars-bridge.arm64/acars-bridge /opt/acars-bridge.arm64
+COPY ./bin/acars-bridge.amd64/acars-bridge /opt/acars-bridge.amd64
 
 # hadolint ignore=DL3008,SC2086,SC2039
 RUN set -x && \
