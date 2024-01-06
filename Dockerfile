@@ -16,7 +16,7 @@ ENV DEVICE_INDEX="" \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY ./rootfs /
-COPY ./bin/acars-bride.armv7/acars-bridge /opt/acars-bridge.armv7
+COPY ./bin/acars-bridge.armv7/acars-bridge /opt/acars-bridge.armv7
 COPY ./bin/acars-bridge.arm64/acars-bridge /opt/acars-bridge.arm64
 COPY ./bin/acars-bridge.amd64/acars-bridge /opt/acars-bridge.amd64
 
