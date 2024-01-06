@@ -1,0 +1,13 @@
+FROM rust:1.74.1-bullseye as builder
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+WORKDIR /tmp/acars-bridge
+# hadolint ignore=DL3008,DL3003,SC1091,DL3009
+RUN set -x && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends libzmq3-dev
+COPY . .
+
+RUN cargo build --release
+
+FROM scratch
+COPY --from=builder /tmp/acars-bridge/target/release/acars-bridge /acars-bridge
