@@ -53,11 +53,6 @@ if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
 	exit 1
 fi
 
-if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
-	"${s6wrap[@]}" echo "SERVER is set but SERVER_PORT is not set, exiting"
-	exit 1
-fi
-
 # Make sure GAIN is valid (if set)
 if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "${GAIN}")" == "0" ]]; then
 	"${s6wrap[@]}" echo "GAIN is not valid, exiting"
