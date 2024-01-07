@@ -62,7 +62,9 @@ fi
 
 if [[ -n "${SERIAL}" ]]; then
 	SOAPYSDR="driver=rtlsdr,serial=$SERIAL"
-elif [[ -n "${SOAPYSDR}" ]]; then
+fi
+
+if [[ -z "${SOAPYSDR}" ]]; then
 	"${s6wrap[@]}" echo "One of SERIAL or SOAPYSDR is not set, exiting"
 	exit 1
 fi
