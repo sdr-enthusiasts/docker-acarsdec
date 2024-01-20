@@ -1,0 +1,45 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+SCRIPT_NAME="$(basename "$0")"
+SCRIPT_NAME="${SCRIPT_NAME%.*}"
+
+# shellcheck disable=SC2034
+s6wrap=(s6wrap --quiet --timestamps --prepend="$SCRIPT_NAME" --args)
+# lets see if legacy SERVER / SERVER_PORT are set
+
+if [[ -n "$SERVER" ]]; then
+  "${s6wrap[@]}" echo "[WARN] SERVER is deprecated, please use OUTPUT_SERVER"
+  OUTPUT_SERVER="$SERVER"
+fi
+
+if [[ -n "$SERVER_PORT" ]]; then
+  "${s6wrap[@]}" echo "[WARN] SERVER_PORT is deprecated, please use OUTPUT_SERVER_PORT"
+  OUTPUT_SERVER_PORT="$SERVER_PORT"
+fi
+
+# detect legacy udp
+if [[ "$OUTPUT_SERVER_MODE" == "udp" ]]; then
+  "${s6wrap[@]}" echo "[WARN] Using UDP mode to connect to $OUTPUT_SERVER:$OUTPUT_SERVER_PORT. Suggest switching to TCP or ZMQ Mode. Please see documentation for more information."
+fi
+
+SOURCE_PORT=5550
+ACARS_BRIDGE_BIN="/opt/acars-bridge"
+ACARS_BRIDGE_CMD=(--source-port "$SOURCE_PORT")
+ACARS_BRIDGE_CMD+=(--source-protocol "udp")
+ACARS_BRIDGE_CMD+=(--source-host "0.0.0.0")
+
+if [[ -n "$OUTPUT_SERVER" ]]; then
+  ACARS_BRIDGE_CMD+=(--destination-host "$OUTPUT_SERVER")
+fi
+
+if [[ -n "$OUTPUT_SERVER_PORT" ]]; then
+  ACARS_BRIDGE_CMD+=(--destination-port "$OUTPUT_SERVER_PORT")
+fi
+
+if [[ -n "$OUTPUT_SERVER_MODE" ]]; then
+  ACARS_BRIDGE_CMD+=(--destination-protocol "$OUTPUT_SERVER_MODE")
+fi
+
+"${s6wrap[@]}" echo "[INFO] Starting acars-bridge with command: $ACARS_BRIDGE_BIN ${ACARS_BRIDGE_CMD[*]}"
+"${s6wrap[@]}" "$ACARS_BRIDGE_BIN" "${ACARS_BRIDGE_CMD[@]}"

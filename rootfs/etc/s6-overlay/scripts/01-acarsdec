@@ -37,20 +37,19 @@ FREQ_STRING=""
 for i in "${SPLIT_FREQS[@]}"
 do
 :
-if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
-	"${s6wrap[@]}" echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
-fi
-FREQ_STRING+=" $i"
+	if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
+		"${s6wrap[@]}" echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
+	fi
+	if [[ -z "${FREQ_STRING}" ]]; then
+		FREQ_STRING="$i"
+	else
+		FREQ_STRING+=" $i"
+	fi
 done
 
 # Make sure mode is valid
 if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
 	"${s6wrap[@]}" echo "MODE is not valid, exiting"
-	exit 1
-fi
-
-if [[ -n "${SERVER}" && -z "${SERVER_PORT}" ]]; then
-	"${s6wrap[@]}" echo "SERVER is set but SERVER_PORT is not set, exiting"
 	exit 1
 fi
 

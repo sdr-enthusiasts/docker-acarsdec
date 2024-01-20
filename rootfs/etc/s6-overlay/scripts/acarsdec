@@ -4,17 +4,6 @@
 # shellcheck disable=SC1091
 source /scripts/common
 
-# Require that acars_server is running
-if ! netstat -an | grep -P '^\s*tcp\s+\d+\s+\d+\s+0\.0\.0\.0:15550\s+(?>\d{1,3}\.{0,1}){4}:\*\s+LISTEN\s*$' > /dev/null; then
-  sleep 1
-  if [[ ! ${QUIET_LOGS,,} =~ true ]]; then
-    # shellcheck disable=SC2154
-    "${s6wrap[@]}" echo "acars_server not running, exiting"
-  fi
-  exit
-fi
-set -e
-
 ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001
 SOAPYSDR=""
@@ -37,7 +26,7 @@ if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
 fi
 
-if [ -n "${SERVER}" ]; then
+if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
 	ACARS_CMD+=("-o" "0")
 	ACARS_CMD+=("-l" "/dev/null")
 else
@@ -53,20 +42,24 @@ if [ -n "${VERBOSE}" ]; then
 	ACARS_CMD+=("-v")
 fi
 
-# Send output JSON to acars_server
-if [ -n "${SERVER}" ]; then
-	if [[ "${MODE}" == @(J|j) ]]; then
-		ACARS_CMD+=("-j" "127.0.0.1:5550")
-	elif [[ "${MODE}" == @(P|p) ]]; then
-		ACARS_CMD+=("-n" "127.0.0.1:5550")
-	elif [[ "${MODE}" == @(A|a) ]]; then
-		ACARS_CMD+=("-N" "127.0.0.1:5550")
-	fi
+# Send output JSON to acars-bridge
+
+if [[ "${MODE}" == @(J|j) ]]; then
+	ACARS_CMD+=("-j" "127.0.0.1:5550")
+elif [[ "${MODE}" == @(P|p) ]]; then
+	ACARS_CMD+=("-n" "127.0.0.1:5550")
+elif [[ "${MODE}" == @(A|a) ]]; then
+	ACARS_CMD+=("-N" "127.0.0.1:5550")
 fi
+
 
 # Specify SOAPYSDR
 if [ -n "${SOAPYSDR}" ]; then
 	ACARS_CMD+=("-d" "$SOAPYSDR")
+fi
+
+if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
+	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
 fi
 
 # shellcheck disable=SC2206
@@ -74,13 +67,14 @@ ACARS_CMD+=($FREQ_STRING)
 
 set -eo pipefail
 
+# shellcheck disable=SC2154
 "${s6wrap[@]}" echo "Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
 
 if [[ ${QUIET_LOGS,,} =~ true ]]; then
 	# shellcheck disable=SC2016
 	"${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}" 2>&1 | \
 	stdbuf -oL sed --unbuffered '/^$/d' | \
-	stdbuf -oL awk '! /^dumpvdl2/' | \
+	stdbuf -oL awk '! /^acarsdec/' | \
 	stdbuf -oL awk '! /^Sampling rate set/' | \
 	stdbuf -oL awk '! /^Found \[0-9]+ device(s):/' | \
 	stdbuf -oL awk '! /^  [0-9]+/' | \

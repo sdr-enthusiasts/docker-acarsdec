@@ -1,3 +1,21 @@
+#build acars-bridge
+FROM rust:1.75.0 as builder
+WORKDIR /tmp/acars-bridge
+# hadolint ignore=DL3008,DL3003,SC1091
+RUN set -x && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends libzmq3-dev
+
+RUN set -x && \
+    git clone https://github.com/sdr-enthusiasts/acars-bridge.git . && \
+    cargo build --release && \
+    # clean up the apt-cache
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    cp /tmp/acars-bridge/target/release/acars-bridge . && \
+    cargo clean
+
+
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
 
 ENV DEVICE_INDEX="" \
@@ -15,10 +33,6 @@ ENV DEVICE_INDEX="" \
     MODE="J"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-COPY ./rootfs /
-COPY ./bin/acars-bridge.armv7/acars-bridge /opt/acars-bridge.armv7
-COPY ./bin/acars-bridge.arm64/acars-bridge /opt/acars-bridge.arm64
-COPY ./bin/acars-bridge.amd64/acars-bridge /opt/acars-bridge.amd64
 
 # hadolint ignore=DL3008,SC2086,SC2039
 RUN set -x && \
@@ -40,17 +54,6 @@ RUN set -x && \
     apt-get install -y --no-install-recommends \
     "${KEPT_PACKAGES[@]}" \
     "${TEMP_PACKAGES[@]}" && \
-    # ensure binaries are executable
-    chmod -v a+x \
-    /opt/acars-bridge.armv7 \
-    /opt/acars-bridge.arm64 \
-    /opt/acars-bridge.amd64 \
-    && \
-    # remove foreign architecture binaries
-    /rename_current_arch_binary.sh && \
-    rm -fv \
-    /opt/acars-bridge.* \
-    && \
     # install sdrplay
     curl --location --output /tmp/install_sdrplay.sh https://raw.githubusercontent.com/sdr-enthusiasts/install-libsdrplay/main/install_sdrplay.sh && \
     chmod +x /tmp/install_sdrplay.sh && \
@@ -151,6 +154,9 @@ RUN set -x && \
     apt-get remove -y "${TEMP_PACKAGES[@]}" && \
     apt-get autoremove -y && \
     rm -rf /src/* /tmp/* /var/lib/apt/lists/*
+
+COPY rootfs/ /
+COPY --from=builder /tmp/acars-bridge/acars-bridge /opt/acars-bridge
 
 # ENTRYPOINT [ "/init" ]
 
