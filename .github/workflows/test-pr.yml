@@ -146,17 +146,17 @@ jobs:
     steps:
       - run: mkdir -p ./bin
 
-      - uses: actions/download-artifact@v4.0.0
+      - uses: actions/download-artifact@v4.1.1
         with:
           name: acars-bridge.amd64
           path: ./bin/acars-bridge.amd64
 
-      - uses: actions/download-artifact@v4.0.0
+      - uses: actions/download-artifact@v4.1.1
         with:
           name: acars-bridge.armv7
           path: ./bin/acars-bridge.armv7
 
-      - uses: actions/download-artifact@v4.0.0
+      - uses: actions/download-artifact@v4.1.1
         with:
           name: acars-bridge.arm64
           path: ./bin/acars-bridge.arm64
