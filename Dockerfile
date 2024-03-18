@@ -16,7 +16,6 @@ ENV DEVICE_INDEX="" \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY ./rootfs /
-COPY ./bin/acars-bridge.armv7/acars-bridge /opt/acars-bridge.armv7
 COPY ./bin/acars-bridge.arm64/acars-bridge /opt/acars-bridge.arm64
 COPY ./bin/acars-bridge.amd64/acars-bridge /opt/acars-bridge.amd64
 
@@ -42,7 +41,6 @@ RUN set -x && \
     "${TEMP_PACKAGES[@]}" && \
     # ensure binaries are executable
     chmod -v a+x \
-    /opt/acars-bridge.armv7 \
     /opt/acars-bridge.arm64 \
     /opt/acars-bridge.amd64 \
     && \
