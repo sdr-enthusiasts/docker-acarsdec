@@ -8,11 +8,9 @@
 
 Docker container for running [airframe's fork of acarsdec](https://github.com/airframesio/acarsdec) and forwarding the received JSON messages to another system or docker container. Best used alongside [ACARS Hub](https://github.com/fredclausen/acarshub).
 
-Builds and runs on `amd64`, `arm64`, `arm/v7`.
+Builds and runs on `amd64`, `arm64`.
 
-## Note for Users running 32-bit Debian Buster-based OSes on ARM
-
-Please see: [Buster-Docker-Fixes](https://github.com/fredclausen/Buster-Docker-Fixes)!
+Please note: **DUE TO LIBSDRPLAY, ARM32 IS NOT SUPPORTED**
 
 ## Required hardware
 
@@ -58,7 +56,7 @@ services:
 | `TZ`                     | Your timezone                                                                                                                                                                    | No       | UTC                |
 | `SOAPYSDR`               | The SoapySDR device string that identifies your dongle. See below for supported soapy sdr types.                                                                                 | No       | Blank              |
 | `FEED_ID`                | Used by the decoder to insert a unique ID in to the output message                                                                                                               | Yes      | Blank              |
-| `FREQUENCIES`            | Semicolon-separated list of frequencies, to a maximum of 16, for the decoder to listen to                                                                                           | Yes      | Blank              |
+| `FREQUENCIES`            | Semicolon-separated list of frequencies, to a maximum of 16, for the decoder to listen to                                                                                        | Yes      | Blank              |
 | `PPM`                    | Parts per million correction of the decoder                                                                                                                                      | No       | 0                  |
 | `GAIN`                   | The gain applied to the RTL-SDR dongle. Recommended to leave at the default autogain. To set manually, gain in in db (0 to 49.6; >52 and -10 will result in AGC; default is AGC) | No       | `-10` for autogain |
 | `OUTPUT_SERVER`          | The server where messages will be forwarded to.                                                                                                                                  | No       | `acars_router`     |
