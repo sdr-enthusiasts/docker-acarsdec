@@ -51,10 +51,6 @@ RUN set -x && \
     rm -fv \
     /opt/acars-bridge.* \
     && \
-    # install sdrplay
-    curl --location --output /tmp/install_sdrplay.sh https://raw.githubusercontent.com/sdr-enthusiasts/install-libsdrplay/main/install_sdrplay.sh && \
-    chmod +x /tmp/install_sdrplay.sh && \
-    /tmp/install_sdrplay.sh && \
     # deploy airspyone host
     git clone https://github.com/airspy/airspyone_host.git /src/airspyone_host && \
     pushd /src/airspyone_host && \
@@ -109,18 +105,10 @@ RUN set -x && \
     # remove the source code
     rm -rf /src/SoapyRTLSDR && \
     # install sdrplay support for soapy
-    git clone https://github.com/pothosware/SoapySDRPlay.git /src/SoapySDRPlay && \
-    pushd /src/SoapySDRPlay && \
-    mkdir build && \
-    pushd build && \
-    cmake .. && \
-    make && \
-    make install && \
-    popd && \
-    popd && \
-    ldconfig && \
-    # remove the source code
-    rm -rf /src/SoapySDRPlay && \
+    # install sdrplay
+    curl --location --output /tmp/install_sdrplay.sh https://raw.githubusercontent.com/sdr-enthusiasts/install-libsdrplay/main/install_sdrplay.sh && \
+    chmod +x /tmp/install_sdrplay.sh && \
+    /tmp/install_sdrplay.sh && \
     # Deploy Airspy
     git clone https://github.com/pothosware/SoapyAirspy.git /src/SoapyAirspy && \
     pushd /src/SoapyAirspy && \
