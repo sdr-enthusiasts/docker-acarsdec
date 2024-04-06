@@ -12,8 +12,6 @@ FREQ_STRING=""
 
 if [ -z "$GAIN" ]; then
     GAIN="-10"
-else
-    GAIN="$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "$GAIN")"
 fi
 
 ACARS_CMD=("-g" "$GAIN" "-i" "$FEED_ID")
