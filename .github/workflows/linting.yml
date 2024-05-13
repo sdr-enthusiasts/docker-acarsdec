@@ -6,18 +6,6 @@ on:
       - main
 
 jobs:
-  # eslint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4.1.5
-  #   - uses: actions/setup-node@v1
-  #     with:
-  #       node-version: '13.x'
-  #   - name: Run yarn
-  #     run: yarn
-  # - name: Run eslint
-  #   run: yarn run eslint . --ext .js
-
   shellcheck:
     runs-on: ubuntu-latest
 
@@ -29,7 +17,7 @@ jobs:
         run: |
           find . -type f -exec grep -m1 -l -E '^#!.*sh.*' {} \; | grep -v -E '\/(.git\/|\S+.MD|\S+.md|retired_scripts\/|acarshub-typescript\/node_modules\/)'
           docker run --rm -i -v "$PWD:/mnt" koalaman/shellcheck:stable $(find . -type f -exec grep -m1 -l -E '^#!.*sh.*' {} \; | grep -v -E '\/(.git\/|\S+.MD|\S+.md|retired_scripts\/|acarshub-typescript\/node_modules\/)')
-  #        docker run --rm -i -v "$PWD:/mnt" koalaman/shellcheck:stable $(find . -type f -exec grep -m1 -l -E '^#!.*execline.*' {} \; | grep -v '/.git/')
+
   hadolint:
     runs-on: ubuntu-latest
 
