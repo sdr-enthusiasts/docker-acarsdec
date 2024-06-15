@@ -76,7 +76,7 @@ jobs:
         uses: docker/setup-buildx-action@v3.3.0
 
       - name: Build arm64
-        uses: docker/build-push-action@v5.3.0
+        uses: docker/build-push-action@v5.4.0
         with:
           context: .
           push: false
@@ -117,7 +117,7 @@ jobs:
         uses: docker/setup-buildx-action@v3.3.0
 
       - name: Build amd64
-        uses: docker/build-push-action@v5.3.0
+        uses: docker/build-push-action@v5.4.0
         with:
           context: .
           push: false
