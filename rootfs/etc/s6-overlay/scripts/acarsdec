@@ -50,11 +50,7 @@ elif [[ "${MODE}" == @(A|a) ]]; then
 	ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
 fi
 
-
-# Specify SOAPYSDR
-if [ -n "${SOAPYSDR}" ]; then
-	ACARS_CMD+=("-d" "$SOAPYSDR")
-fi
+ACARS_CMD+=("$SOAPYSDR")
 
 if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
 	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
