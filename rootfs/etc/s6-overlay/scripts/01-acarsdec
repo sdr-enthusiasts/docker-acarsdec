@@ -60,7 +60,7 @@ if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 1
 fi
 
 if [[ -n "${SERIAL}" ]]; then
-	SOAPYSDR="driver=rtlsdr,serial=$SERIAL"
+	SOAPYSDR="--soapysdr driver=rtlsdr,serial=$SERIAL"
 fi
 
 if [[ -z "${SOAPYSDR}" ]]; then

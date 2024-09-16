@@ -43,11 +43,11 @@ fi
 # Send output JSON to acars-bridge
 
 if [[ "${MODE}" == @(J|j) ]]; then
-	ACARS_CMD+=("-j" "127.0.0.1:5550")
+	ACARS_CMD+=("--output" "json:udp:host=127.0.0.1,port=5550")
 elif [[ "${MODE}" == @(P|p) ]]; then
-	ACARS_CMD+=("-n" "127.0.0.1:5550")
+	ACARS_CMD+=("--output" "pp:udp:host=127.0.0.1,port=5550")
 elif [[ "${MODE}" == @(A|a) ]]; then
-	ACARS_CMD+=("-N" "127.0.0.1:5550")
+	ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
 fi
 
 
