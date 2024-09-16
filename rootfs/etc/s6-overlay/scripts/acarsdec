@@ -24,13 +24,13 @@ if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
 fi
 
-if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
-	ACARS_CMD+=("-o" "0")
-	ACARS_CMD+=("-l" "/dev/null")
-else
-	ACARS_CMD+=("-o" "4")
-	ACARS_CMD+=("-v")
-fi
+# if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
+# 	ACARS_CMD+=("-o" "0")
+# 	ACARS_CMD+=("-l" "/dev/null")
+# else
+# 	ACARS_CMD+=("-o" "4")
+# 	ACARS_CMD+=("-v")
+# fi
 
 if [ -n "${RTLMULT}" ]; then
 	ACARS_CMD+=("-m" "$RTLMULT")
