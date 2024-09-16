@@ -24,10 +24,6 @@ fi
 # 	ACARS_CMD+=("-v")
 # fi
 
-if [ -n "${RTLMULT}" ]; then
-	ACARS_CMD+=("-m" "$RTLMULT")
-fi
-
 if [ -n "${VERBOSE}" ]; then
 	ACARS_CMD+=("-v")
 fi
@@ -56,6 +52,10 @@ ACARS_CMD+=("-g" "$GAIN")
 
 if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
 	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
+fi
+
+if [ -n "${RTLMULT}" ]; then
+	ACARS_CMD+=("-m" "$RTLMULT")
 fi
 
 # shellcheck disable=SC2206
