@@ -40,7 +40,7 @@ fi
 
 # loop through the SOAPYSDR string and split on spaces
 if [[ -n "${SOAPYSDR}" ]]; then
-	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR_STRING}"
+	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR}"
 	ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}")
 fi
 
