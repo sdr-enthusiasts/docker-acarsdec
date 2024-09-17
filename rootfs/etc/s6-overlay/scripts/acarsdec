@@ -38,7 +38,11 @@ elif [[ "${MODE}" == @(A|a) ]]; then
 	ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
 fi
 
-ACARS_CMD+=("$SOAPYSDR")
+# loop through the SOAPYSDR string and split on spaces
+if [[ -n "${SOAPYSDR}" ]]; then
+	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR_STRING}"
+	ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}")
+fi
 
 if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
