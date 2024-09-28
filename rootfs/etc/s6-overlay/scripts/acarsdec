@@ -10,31 +10,19 @@ SOAPYSDR=""
 
 FREQ_STRING=""
 
-if [ -z "$GAIN" ]; then
-    GAIN="-10"
-fi
-
-ACARS_CMD=("-g" "$GAIN" "-i" "$FEED_ID")
+ACARS_CMD=("-i" "$FEED_ID")
 
 if [ -n "${CENTER_FREQ}" ]; then
 	ACARS_CMD+=("-c" "$CENTER_FREQ")
 fi
 
-if [ -n "${PPM}" ]; then
-	ACARS_CMD+=("-p" "$PPM")
-fi
-
-if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
-	ACARS_CMD+=("-o" "0")
-	ACARS_CMD+=("-l" "/dev/null")
-else
-	ACARS_CMD+=("-o" "4")
-	ACARS_CMD+=("-v")
-fi
-
-if [ -n "${RTLMULT}" ]; then
-	ACARS_CMD+=("-m" "$RTLMULT")
-fi
+# if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
+# 	ACARS_CMD+=("-o" "0")
+# 	ACARS_CMD+=("-l" "/dev/null")
+# else
+# 	ACARS_CMD+=("-o" "4")
+# 	ACARS_CMD+=("-v")
+# fi
 
 if [ -n "${VERBOSE}" ]; then
 	ACARS_CMD+=("-v")
@@ -43,21 +31,35 @@ fi
 # Send output JSON to acars-bridge
 
 if [[ "${MODE}" == @(J|j) ]]; then
-	ACARS_CMD+=("-j" "127.0.0.1:5550")
+	ACARS_CMD+=("--output" "json:udp:host=127.0.0.1,port=5550")
 elif [[ "${MODE}" == @(P|p) ]]; then
-	ACARS_CMD+=("-n" "127.0.0.1:5550")
+	ACARS_CMD+=("--output" "pp:udp:host=127.0.0.1,port=5550")
 elif [[ "${MODE}" == @(A|a) ]]; then
-	ACARS_CMD+=("-N" "127.0.0.1:5550")
+	ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
 fi
 
-
-# Specify SOAPYSDR
-if [ -n "${SOAPYSDR}" ]; then
-	ACARS_CMD+=("-d" "$SOAPYSDR")
+# loop through the SOAPYSDR string and split on spaces
+if [[ -n "${SOAPYSDR}" ]]; then
+	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR}"
+	ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}")
 fi
+
+if [ -n "${PPM}" ]; then
+	ACARS_CMD+=("-p" "$PPM")
+fi
+
+if [ -z "$GAIN" ]; then
+    GAIN="-10"
+fi
+
+ACARS_CMD+=("-g" "$GAIN")
 
 if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
 	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
+fi
+
+if [ -n "${RTLMULT}" ]; then
+	ACARS_CMD+=("-m" "$RTLMULT")
 fi
 
 # shellcheck disable=SC2206

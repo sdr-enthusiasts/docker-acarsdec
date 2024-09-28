@@ -54,6 +54,16 @@ RUN set -x && \
     apt-get install -y --no-install-recommends \
     "${KEPT_PACKAGES[@]}" \
     "${TEMP_PACKAGES[@]}" && \
+    # install libcjson
+    git clone https://github.com/DaveGamble/cJSON.git /src/cJSON && \
+    pushd /src/cJSON && \
+    mkdir -p /src/cJSON/build && \
+    pushd /src/cJSON/build && \
+    cmake .. && \
+    make && \
+    make install && \
+    ldconfig && \
+    popd && popd && \
     # deploy airspyone host
     git clone https://github.com/airspy/airspyone_host.git /src/airspyone_host && \
     pushd /src/airspyone_host && \
@@ -127,7 +137,8 @@ RUN set -x && \
     rm -rf /src/SoapyAirspy && \
     # acarsdec
     #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
-    git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
+    #git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
+    git clone --depth 1 --single-branch --branch master https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
     #git checkout testing && \
