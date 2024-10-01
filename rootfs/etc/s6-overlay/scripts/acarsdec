@@ -41,7 +41,8 @@ fi
 # loop through the SOAPYSDR string and split on spaces
 if [[ -n "${SOAPYSDR}" ]]; then
 	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR}"
-	ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}")
+	# ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}") # used for acarsdec < 4.0
+	ACARS_CMD+=("--soapysdr" "${SOAPYSDR_PROCESSED[@]}")
 fi
 
 if [ -n "${PPM}" ]; then
