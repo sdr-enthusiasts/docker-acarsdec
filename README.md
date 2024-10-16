@@ -35,8 +35,6 @@ services:
     tty: true
     container_name: acarsdec
     restart: always
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
     ports:
     environment:
       - TZ="America/Denver"
@@ -47,6 +45,10 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
+    device_cgroup_rules:
+      - 'c 189:* rwm'
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb:ro
 ```
 
 ## Configuration options
