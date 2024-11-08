@@ -24,13 +24,6 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 
 # loop through SPLIT_FREQS
 
-# We can only have 16 total frequencies
-
-if [[ "${#SPLIT_FREQS[@]}" -gt 16 ]]; then
-	"${s6wrap[@]}" echo "FREQUENCIES may not contain more than 16 frequencies, exiting"
-	exit 1
-fi
-
 # FREQUENCIES needs to be in the range of 118.0 - 137.0.
 
 FREQ_STRING=""
