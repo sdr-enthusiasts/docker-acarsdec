@@ -32,7 +32,6 @@ version: "2.0"
 services:
   acarsdec:
     image: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
-    tty: true
     container_name: acarsdec
     restart: always
     ports:
