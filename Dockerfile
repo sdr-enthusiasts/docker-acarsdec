@@ -1,4 +1,4 @@
-FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
+FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder-soapy
 
 ENV DEVICE_INDEX="" \
   QUIET_LOGS="TRUE" \
@@ -59,77 +59,6 @@ RUN set -x && \
   make install && \
   ldconfig && \
   popd && popd && \
-  # deploy airspyone host
-  git clone https://github.com/airspy/airspyone_host.git /src/airspyone_host && \
-  pushd /src/airspyone_host && \
-  mkdir -p /src/airspyone_host/build && \
-  pushd /src/airspyone_host/build && \
-  cmake ../ -DINSTALL_UDEV_RULES=ON && \
-  make && \
-  make install && \
-  ldconfig && \
-  popd && popd && \
-  # remove the source code
-  rm -rf /src/airspyone_host && \
-  # Deploy SoapySDR
-  git clone https://github.com/pothosware/SoapySDR.git /src/SoapySDR && \
-  pushd /src/SoapySDR && \
-  BRANCH_SOAPYSDR=$(git tag --sort="creatordate" | tail -1) && \
-  git checkout "$BRANCH_SOAPYSDR" && \
-  mkdir -p /src/SoapySDR/build && \
-  pushd /src/SoapySDR/build && \
-  cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
-  make all && \
-  make test && \
-  make install && \
-  popd && popd && \
-  ldconfig && \
-  # remove the source code
-  rm -rf /src/SoapySDR && \
-  # Deploy SoapyRTLTCP
-  git clone https://github.com/pothosware/SoapyRTLTCP.git /src/SoapyRTLTCP && \
-  pushd /src/SoapyRTLTCP && \
-  mkdir -p /src/SoapyRTLTCP/build && \
-  pushd /src/SoapyRTLTCP/build && \
-  cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
-  make all && \
-  make install && \
-  popd && popd && \
-  ldconfig && \
-  # remove the source code
-  rm -rf /src/SoapyRTLTCP && \
-  # Deploy SoapyRTLSDR
-  git clone https://github.com/pothosware/SoapyRTLSDR.git /src/SoapyRTLSDR && \
-  pushd /src/SoapyRTLSDR && \
-  BRANCH_SOAPYRTLSDR=$(git tag --sort="creatordate" | tail -1) && \
-  git checkout "$BRANCH_SOAPYRTLSDR" && \
-  mkdir -p /src/SoapyRTLSDR/build && \
-  pushd /src/SoapyRTLSDR/build && \
-  cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
-  make all && \
-  make install && \
-  popd && popd && \
-  ldconfig && \
-  # remove the source code
-  rm -rf /src/SoapyRTLSDR && \
-  # install sdrplay support for soapy
-  # install sdrplay
-  curl --location --output /tmp/install_sdrplay.sh https://raw.githubusercontent.com/sdr-enthusiasts/install-libsdrplay/main/install_sdrplay.sh && \
-  chmod +x /tmp/install_sdrplay.sh && \
-  /tmp/install_sdrplay.sh && \
-  # Deploy Airspy
-  git clone https://github.com/pothosware/SoapyAirspy.git /src/SoapyAirspy && \
-  pushd /src/SoapyAirspy && \
-  mkdir build && \
-  pushd build && \
-  cmake .. && \
-  make    && \
-  make install   && \
-  popd && \
-  popd && \
-  ldconfig && \
-  # remove the source code
-  rm -rf /src/SoapyAirspy && \
   # acarsdec
   #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
   #git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
