@@ -211,7 +211,7 @@ jobs:
       platform_linux_arm32v6_enabled: false
       platform_linux_i386_enabled: false
       platform_linux_arm32v7_enabled: false
-      build_baseimage_url: :acars-decoder/:acars-decoder-test-pr
+      build_baseimage_url: :acars-decoder-soapy/:acars-decoder-soapy-test-pr
       cache_enabled: true
       cache_path: ./bin/
       cache_key: ${{ github.run_id }}
