@@ -16,7 +16,7 @@ RUN set -x && \
     cargo clean
 
 
-FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder
+FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder-soapy
 
 ENV DEVICE_INDEX="" \
     QUIET_LOGS="TRUE" \
