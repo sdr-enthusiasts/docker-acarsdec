@@ -40,7 +40,7 @@ jobs:
     if: |
       github.event_name == 'workflow_dispatch' &&
       github.event.inputs.reason != ''
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Log dispatch reason
         env:
@@ -52,7 +52,7 @@ jobs:
 
   binary_build_arm64:
     name: Build Binary - arm64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # needs: test_rust_functionality
 
     steps:
@@ -93,7 +93,7 @@ jobs:
 
   binary_build_amd64:
     name: Build Binary - amd64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # needs: test_rust_functionality
 
     steps:
@@ -134,7 +134,7 @@ jobs:
 
   consolidate_binaries:
     name: Consolidate & Cache Binaries
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [binary_build_amd64, binary_build_arm64]
     steps:
       - run: mkdir -p ./bin
