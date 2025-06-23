@@ -44,23 +44,16 @@ jobs:
     if: |
       github.event.inputs.build_latest_as_test == 'false' ||
       github.event.inputs.build_latest_as_test == ''
-    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/build_and_push_image.yml@main
+    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@main
     with:
       push_enabled: true
       push_destinations: ghcr.io
       ghcr_repo_owner: ${{ github.repository_owner }}
       ghcr_repo: ${{ github.repository }}
-      platform_linux_arm32v6_enabled: false
-      platform_linux_i386_enabled: false
       platform_linux_arm32v7_enabled: false
-      get_version_method: git_commit_hash_short
       # set build_latest to true if github.event.inputs.use_test_image is false
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '' }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
-      # only build the entire stack if we are not using the test image
-      build_version_specific: false
-      build_platform_specific: false
-      build_nohealthcheck: false
       build_baseimage_url: :acars-decoder-soapy/:acars-decoder-soapy-test-pr
 
     secrets:
@@ -71,24 +64,17 @@ jobs:
     if: |
       github.event.inputs.build_latest_as_test == 'true' &&
       (github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '')
-    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/build_and_push_image.yml@main
+    uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@main
     with:
       push_enabled: true
       push_destinations: ghcr.io
       ghcr_repo_owner: ${{ github.repository_owner }}
       ghcr_repo: ${{ github.repository }}
       build_with_tmpfs: true
-      get_version_method: git_commit_hash_short
       # set build_latest to true if github.event.inputs.use_test_image is false
       build_latest: true
       docker_latest_tag: test
       build_baseimage_test: false
-      # only build the entire stack if we are not using the test image
-      build_version_specific: false
-      build_platform_specific: false
-      build_nohealthcheck: false
-      platform_linux_arm32v6_enabled: false
-      platform_linux_i386_enabled: false
       platform_linux_arm32v7_enabled: false
       build_baseimage_url: :acars-decoder-soapy/:acars-decoder-soapy-test-pr
     secrets:
