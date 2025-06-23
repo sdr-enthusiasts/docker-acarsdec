@@ -1,3 +1,5 @@
+FROM ghcr.io/sdr-enthusiasts/acars-bridge:latest AS builder
+
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder-soapy
 
 ENV DEVICE_INDEX="" \
@@ -16,8 +18,7 @@ ENV DEVICE_INDEX="" \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY ./rootfs /
-COPY ./bin/acars-bridge.arm64/acars-bridge /opt/acars-bridge.arm64
-COPY ./bin/acars-bridge.amd64/acars-bridge /opt/acars-bridge.amd64
+COPY --from=builder /acars-bridge /opt/acars-bridge
 
 # hadolint ignore=DL3008,SC2086,SC2039
 RUN set -x && \
@@ -40,15 +41,7 @@ RUN set -x && \
   "${KEPT_PACKAGES[@]}" \
   "${TEMP_PACKAGES[@]}" && \
   # ensure binaries are executable
-  chmod -v a+x \
-  /opt/acars-bridge.arm64 \
-  /opt/acars-bridge.amd64 \
-  && \
-  # remove foreign architecture binaries
-  /rename_current_arch_binary.sh && \
-  rm -fv \
-  /opt/acars-bridge.* \
-  && \
+  chmod +x /opt/acars-bridge && \
   # install libcjson
   git clone https://github.com/DaveGamble/cJSON.git /src/cJSON && \
   pushd /src/cJSON && \

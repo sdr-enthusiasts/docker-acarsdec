@@ -18,16 +18,6 @@ on:
         description: "Build latest as test"
         default: false
 
-  # Build and deploy the image on pushes to main branch
-  push:
-    branches:
-      - main
-    paths:
-      - "rust/**"
-      - "Dockerfile"
-      - "Dockerfile.build_binary"
-      - "rootfs/**"
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -49,116 +39,8 @@ jobs:
         run: |
           echo "Workflow dispatch reason: $INPUTS_REASON"
           echo "Use test image: $INPUTS_USE_TEST_IMAGE"
-
-  binary_build_arm64:
-    name: Build Binary - arm64
-    runs-on: ubuntu-22.04
-    # needs: test_rust_functionality
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 0
-          repository: sdr-enthusiasts/acars-bridge
-
-      - name: Run Docker on tmpfs
-        uses: JonasAlfredsson/docker-on-tmpfs@v1.0.1
-        with:
-          tmpfs_size: 5
-          swap_size: 4
-          swap_location: "/mnt/swapfile"
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3.6.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
-
-      - name: Build arm64
-        uses: docker/build-push-action@v6.18.0
-        with:
-          context: .
-          push: false
-          file: Dockerfile.build_binary
-          tags: acars-bridge:arm64
-          platforms: linux/arm64
-          outputs: type=local,dest=./image_arm64/
-
-      - name: Upload artifact arm64 binary
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: acars-bridge.arm64
-          path: ./image_arm64/acars-bridge
-
-  binary_build_amd64:
-    name: Build Binary - amd64
-    runs-on: ubuntu-22.04
-    # needs: test_rust_functionality
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 0
-          repository: sdr-enthusiasts/acars-bridge
-
-      - name: Run Docker on tmpfs
-        uses: JonasAlfredsson/docker-on-tmpfs@v1.0.1
-        with:
-          tmpfs_size: 5
-          swap_size: 4
-          swap_location: "/mnt/swapfile"
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3.6.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
-
-      - name: Build amd64
-        uses: docker/build-push-action@v6.18.0
-        with:
-          context: .
-          push: false
-          file: Dockerfile.build_binary
-          tags: acars-bridge:amd64
-          platforms: linux/amd64
-          outputs: type=local,dest=./image_amd64/
-
-      - name: Upload artifact amd64 binary
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: acars-bridge.amd64
-          path: ./image_amd64/acars-bridge
-
-  consolidate_binaries:
-    name: Consolidate & Cache Binaries
-    runs-on: ubuntu-22.04
-    needs: [binary_build_amd64, binary_build_arm64]
-    steps:
-      - run: mkdir -p ./bin
-
-      - uses: actions/download-artifact@v4.3.0
-        with:
-          name: acars-bridge.amd64
-          path: ./bin/acars-bridge.amd64
-
-      - uses: actions/download-artifact@v4.3.0
-        with:
-          name: acars-bridge.arm64
-          path: ./bin/acars-bridge.arm64
-
-      - run: ls -la ./bin/*
-
-      - name: Cache Binaries
-        uses: actions/cache@v4.2.3
-        with:
-          path: ./bin/
-          key: ${{ github.run_id }}
   build_and_push:
     name: Image Build & Push
-    needs: [consolidate_binaries]
     if: |
       github.event.inputs.build_latest_as_test == 'false' ||
       github.event.inputs.build_latest_as_test == ''
@@ -180,15 +62,12 @@ jobs:
       build_platform_specific: false
       build_nohealthcheck: false
       build_baseimage_url: :acars-decoder-soapy/:acars-decoder-soapy-test-pr
-      cache_enabled: true
-      cache_path: ./bin/
-      cache_key: ${{ github.run_id }}
+
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy_test:
     name: Deploy as test
-    needs: [consolidate_binaries]
     if: |
       github.event.inputs.build_latest_as_test == 'true' &&
       (github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '')
@@ -212,8 +91,5 @@ jobs:
       platform_linux_i386_enabled: false
       platform_linux_arm32v7_enabled: false
       build_baseimage_url: :acars-decoder-soapy/:acars-decoder-soapy-test-pr
-      cache_enabled: true
-      cache_path: ./bin/
-      cache_key: ${{ github.run_id }}
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
