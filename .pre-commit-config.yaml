@@ -41,7 +41,7 @@ repos:
       - id: shellcheck
 
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 06e4cc849d03f3a59ca223a4046f4bb5bb2aba6d  # frozen: 0.33.0
+    rev: a1419a25b3ec6c91a963e044f03f6dc197930b10  # frozen: 0.33.1
     hooks:
       - id: check-github-actions
       - id: check-github-workflows
