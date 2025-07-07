@@ -20,10 +20,6 @@ A computer host on a suitable architecture and one USB RTL-SDR dongle connected 
 
 The default `SERVER` and `SERVER_PORT` values are suitable for automatically working with ACARS Hub, provided ACARS Hub is **on the same pi as the decoder**. If ACARS Hub is not on the same Pi, please provide the correct host name in the `SERVER` variable. Very likely you will not have to change the `SERVER_PORT`, but if you did change the port mapping on ACARS Router (and you will know if you did) please set the server port correctly as well.
 
-## Deprecation Notice
-
-`SERIAL` has been deprecated in favor of `SOAPYSDR`. Please update your configuration accordingly. If `SERIAL` is set the driver will be set to `rtlsdr` and the serial number will be set to the value of `SERIAL`.
-
 ## Up and running
 
 ```yaml
@@ -37,7 +33,7 @@ services:
     ports:
     environment:
       - TZ="America/Denver"
-      - SERIAL=13305
+      - RTL_SERIAL=1342
       - FEED_ID=ACARS
       - FREQUENCIES=130.025;130.450;131.125;131.550
       - OUTPUT_SERVER_MODE=tcp
@@ -55,6 +51,8 @@ services:
 | Variable                 | Description                                                                                                                                                                      | Required | Default            |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------ |
 | `TZ`                     | Your timezone                                                                                                                                                                    | No       | UTC                |
+| `RTL_SERIAL`             | The rtlsdr device serial that identifies your dongle.                                                                                                                            | No       | Blank              |
+| `BIASTEE`                | Enable biastee when using RTL_SERIAL (doesn't work with SOAPY).                                                                                                                  | No       | Blank              |
 | `SOAPYSDR`               | The SoapySDR device string that identifies your dongle. See below for supported soapy sdr types.                                                                                 | No       | Blank              |
 | `FEED_ID`                | Used by the decoder to insert a unique ID in to the output message                                                                                                               | Yes      | Blank              |
 | `FREQUENCIES`            | Semicolon-separated list of frequencies for the decoder to listen to                                                                                        | Yes      | Blank              |
