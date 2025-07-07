@@ -52,17 +52,14 @@ if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 1
 	exit 1
 fi
 
-if [[ -n "${SERIAL}" ]]; then
-	echo "SERIAL is decepricated. Please see the readme and use SOAPYSDR instead."
-	SOAPYSDR="driver=rtlsdr,serial=$SERIAL"
+if [[ -z "${SOAPYSDR}" ]] && [[ -z "${RTL_SERIAL}" ]] && [[ -z "${SERIAL}" ]] ; then
+    "${s6wrap[@]}" echo "Either RTL_SERIAL or SOAPYSDR must be set, exiting"
 fi
 
-if [[ -z "${SOAPYSDR}" ]]; then
-	"${s6wrap[@]}" echo "One of SERIAL or SOAPYSDR is not set, exiting"
-	exit 1
+if [[ -n "${SOAPYSDR}" ]]; then
+    sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
 fi
 
-sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
 
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json

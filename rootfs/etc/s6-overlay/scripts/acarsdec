@@ -38,16 +38,30 @@ elif [[ "${MODE}" == @(A|a) ]]; then
 	ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
 fi
 
-SAMPLERATEMULTIPLIER=${RTLMULT}
 # loop through the SOAPYSDR string and split on spaces
 if [[ -n "${SOAPYSDR}" ]]; then
 	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR}"
 	# ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}") # used for acarsdec < 4.0
 	ACARS_CMD+=("--soapysdr" "${SOAPYSDR_PROCESSED[@]}")
-	if [[ ${SOAPYSDR} == *"airspy"* ]]; then
+	if [[ ${SOAPYSDR} == *"airspy"* ]] && [[ -z "${RTLMULT}" ]]; then
 		# airspy runs at 3MSPS so needs a different sample rate multiplier
-		SAMPLERATEMULTIPLIER="240"
+		RTLMULT="240"
 	fi
+fi
+
+if [[ -z "${RTL_SERIAL}" ]] && [[ -n "${SERIAL}" ]]; then
+    # if RTL_SERIAL not set, use legacy env var SERIAL
+    RTL_SERIAL="${SERIAL}"
+fi
+
+
+if [[ -n "${RTL_SERIAL}" ]]; then
+	ACARS_CMD+=("--rtlsdr" "${RTL_SERIAL}")
+    if chk_enabled "${BIASTEE}"; then
+        ACARS_CMD+=("-B" "1")
+    else
+        ACARS_CMD+=("-B" "0")
+    fi
 fi
 
 if [ -n "${PPM}" ]; then
@@ -64,9 +78,11 @@ if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
 	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
 fi
 
-if [ -n "${SAMPLERATEMULTIPLIER}" ]; then
-	ACARS_CMD+=("-m" "$SAMPLERATEMULTIPLIER")
+# default to RTLMULT 160
+if [ -z "${RTLMULT}" ]; then
+    RTLMULT=160
 fi
+ACARS_CMD+=("-m" "$RTLMULT")
 
 # shellcheck disable=SC2206
 ACARS_CMD+=($FREQ_STRING)
