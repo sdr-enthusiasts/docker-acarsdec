@@ -85,34 +85,20 @@ fi
 # shellcheck disable=SC2206
 ACARS_CMD+=($FREQ_STRING)
 
-set -eo pipefail
-
 # shellcheck disable=SC2154
 "${s6wrap[@]}" echo "Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
 
 if [[ ${QUIET_LOGS,,} =~ true ]]; then
 	# shellcheck disable=SC2016
-	"${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}" 2>&1 | \
-	stdbuf -oL sed --unbuffered '/^$/d' | \
-	stdbuf -oL awk '! /^acarsdec/' | \
-	stdbuf -oL awk '! /^Sampling rate set/' | \
-	stdbuf -oL awk '! /^Found \[0-9]+ device(s):/' | \
-	stdbuf -oL awk '! /^  [0-9]+/' | \
-	stdbuf -oL awk '! /^Using device [0-9]+/' | \
-	stdbuf -oL awk '! /^Found /' | \
-	stdbuf -oL awk '! /^Exact sample rate /' | \
-	stdbuf -oL awk '! /^Setting sample rate/' | \
-	stdbuf -oL awk '! /PLL not locked!$/' | \
-	stdbuf -oL awk '! /^Center frequency set/' | \
-	stdbuf -oL awk '! /^Device [#]?[0-9]+/' | \
-	stdbuf -oL awk '! /^Tuner gain: /' | \
-	stdbuf -oL awk '! /^Set center freq. /' | \
-	stdbuf -oL awk '! /^Decoding [0-9]+ channels/' | \
-	stdbuf -oL awk '! /^Allocating [0-9]+ zero-copy buffers/' | \
-	stdbuf -oL awk '{print $0}'
+	FILTER_TERMS+=("-e" "Found .* tuner")
+	FILTER_TERMS+=("-e" "Setting sample rate")
+	FILTER_TERMS+=("-e" "Setting bandwidth")
+	FILTER_TERMS+=("-e" "Starting, decoding .* channels")
+	FILTER_TERMS+=("-e" "Exact sample rate is: ")
+	exec "${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}" > >(grep --line-buffered -v "${FILTER_TERMS[@]}")
 else
 	# shellcheck disable=SC2016
-	"${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}"
+	exec "${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}"
 fi
 
 sleep 5
