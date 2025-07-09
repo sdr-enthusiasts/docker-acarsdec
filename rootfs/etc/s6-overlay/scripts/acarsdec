@@ -78,11 +78,9 @@ if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
 	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
 fi
 
-# default to RTLMULT 160
-if [ -z "${RTLMULT}" ]; then
-    RTLMULT=160
+if [ -n "${RTLMULT}" ]; then
+    ACARS_CMD+=("-m" "$RTLMULT")
 fi
-ACARS_CMD+=("-m" "$RTLMULT")
 
 # shellcheck disable=SC2206
 ACARS_CMD+=($FREQ_STRING)
