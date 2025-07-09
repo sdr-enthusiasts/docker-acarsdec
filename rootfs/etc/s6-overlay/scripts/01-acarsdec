@@ -19,8 +19,7 @@ if [[ -z "${FREQUENCIES}" ]]; then
 	exit 1
 fi
 
-IFS=';'
-read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
+IFS='; ' read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 
 # loop through SPLIT_FREQS
 
@@ -29,8 +28,7 @@ read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
 FREQ_STRING=""
 for i in "${SPLIT_FREQS[@]}"
 do
-:
-	if [[ $(echo "$i > 118.0" | bc)  -eq 0 || $(echo "$i < 137.0" | bc) -eq 0 ]]; then
+	if (( $(bc <<< "$i < 118.0") || $(bc <<< "$i > 137.0") )); then
 		"${s6wrap[@]}" echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
 	fi
 	if [[ -z "${FREQ_STRING}" ]]; then
