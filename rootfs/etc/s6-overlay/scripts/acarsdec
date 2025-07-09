@@ -88,7 +88,7 @@ ACARS_CMD+=($FREQ_STRING)
 # shellcheck disable=SC2154
 "${s6wrap[@]}" echo "Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
 
-if [[ ${QUIET_LOGS,,} =~ true ]]; then
+if chk_enabled "${QUIET_LOGS}"; then
 	# shellcheck disable=SC2016
 	FILTER_TERMS+=("-e" "Found .* tuner")
 	FILTER_TERMS+=("-e" "Setting sample rate")

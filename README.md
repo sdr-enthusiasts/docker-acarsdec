@@ -62,7 +62,7 @@ services:
 | `OUTPUT_SERVER_PORT`     | The port where the server will receive messages on.                                                                                                                              | No       | `5550`             |
 | `OUTPUT_SERVER_MODE`     | The output mode. `udp`, `tcp` and `zmq` are valid                                                                                                                                | No       | `udp`              |
 | `MODE`                   | The output mode. `P` for planeplotter, `J` for JSON and `A` for acarsdec.                                                                                                        | No       | `J`                |
-| `QUIET_LOGS`             | Mute log output to the bare minimum. Set to `false` to see all of the log messages.                                                                                              | No       | `TRUE`             |
+| `QUIET_LOGS`             | Mute log output to the bare minimum. Set to `true` to see less log messages.                                                                                                     | No       | `FALSE`            |
 | `ACARSDEC_COMMAND_EXTRA` | Additional arguments to pass to the decoder.                                                                                                                                     | No       | Blank              |
 
 ## SoapySDR device string

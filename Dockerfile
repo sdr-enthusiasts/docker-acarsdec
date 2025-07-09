@@ -3,7 +3,7 @@ FROM ghcr.io/sdr-enthusiasts/acars-bridge:latest AS builder
 FROM ghcr.io/sdr-enthusiasts/docker-baseimage:acars-decoder-soapy
 
 ENV DEVICE_INDEX="" \
-  QUIET_LOGS="TRUE" \
+  QUIET_LOGS="FALSE" \
   FREQUENCIES="" \
   FEED_ID="" \
   PPM="0"\
