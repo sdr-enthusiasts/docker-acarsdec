@@ -35,7 +35,7 @@ services:
       - TZ="America/Denver"
       - RTL_SERIAL=1342
       - FEED_ID=ACARS
-      - FREQUENCIES=130.025;130.450;131.125;131.550
+      - FREQUENCIES=130.025 130.450 131.125 131.550
       - OUTPUT_SERVER_MODE=tcp
     tmpfs:
       - /run:exec,size=64M
@@ -55,7 +55,7 @@ services:
 | `BIASTEE`                | Enable biastee when using RTL_SERIAL (doesn't work with SOAPY).                                                                                                                  | No       | Blank              |
 | `SOAPYSDR`               | The SoapySDR device string that identifies your dongle. See below for supported soapy sdr types.                                                                                 | No       | Blank              |
 | `FEED_ID`                | Used by the decoder to insert a unique ID in to the output message                                                                                                               | Yes      | Blank              |
-| `FREQUENCIES`            | Semicolon-separated list of frequencies for the decoder to listen to                                                                                        | Yes      | Blank              |
+| `FREQUENCIES`            | Semicolon-separated or space-separated list of frequencies in MHz for the decoder to listen to                                                                                   | Yes      | Blank              |
 | `PPM`                    | Parts per million correction of the decoder                                                                                                                                      | No       | 0                  |
 | `GAIN`                   | The gain applied to the RTL-SDR dongle. Recommended to leave at the default autogain. To set manually, gain in in db (0 to 49.6; >52 and -10 will result in AGC; default is AGC) | No       | `-10` for autogain |
 | `OUTPUT_SERVER`          | The server where messages will be forwarded to.                                                                                                                                  | No       | `acars_router`     |
