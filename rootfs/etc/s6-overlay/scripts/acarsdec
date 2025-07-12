@@ -43,6 +43,12 @@ if [[ -n "${SOAPYSDR}" ]]; then
 		# airspy runs at 3MSPS so needs a different sample rate multiplier
 		RTLMULT="240"
 	fi
+	# newer versions of acarsdec default to lower sample rates with soapy
+	# to avoid compatibility issues, set the old default of 160 if no RTLMULT was given
+	# with rtl-sdr this isn't necessary
+	if [[ -z "${RTLMULT}" ]]; then
+	RTLMULT="160"
+	fi
 fi
 
 if [[ -z "${RTL_SERIAL}" ]] && [[ -n "${SERIAL}" ]]; then
