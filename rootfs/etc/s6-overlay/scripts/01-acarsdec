@@ -54,11 +54,6 @@ if [[ -z "${SOAPYSDR}" ]] && [[ -z "${RTL_SERIAL}" ]] && [[ -z "${SERIAL}" ]] ; 
     "${s6wrap[@]}" echo "Either RTL_SERIAL or SOAPYSDR must be set, exiting"
 fi
 
-if [[ -n "${SOAPYSDR}" ]]; then
-    sed -i "s/SOAPYSDR=\"\"/SOAPYSDR=\"$SOAPYSDR\"/g" /etc/s6-overlay/scripts/acarsdec
-fi
-
-
 mkdir -p /run/acars
 touch /run/acars/acars.past5min.json
 
