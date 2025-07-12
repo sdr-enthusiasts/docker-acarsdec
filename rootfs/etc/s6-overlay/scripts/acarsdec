@@ -6,8 +6,6 @@ source /scripts/common
 
 ACARS_BIN="/usr/local/bin/acarsdec"
 # shellcheck disable=SC2001
-SOAPYSDR=""
-
 FREQ_STRING=""
 
 ACARS_CMD=("-i" "$FEED_ID")
@@ -40,9 +38,7 @@ fi
 
 # loop through the SOAPYSDR string and split on spaces
 if [[ -n "${SOAPYSDR}" ]]; then
-	IFS=' ' read -ra SOAPYSDR_PROCESSED <<< "${SOAPYSDR}"
-	# ACARS_CMD+=("${SOAPYSDR_PROCESSED[@]}") # used for acarsdec < 4.0
-	ACARS_CMD+=("--soapysdr" "${SOAPYSDR_PROCESSED[@]}")
+	ACARS_CMD+=("--soapysdr" "${SOAPYSDR}")
 	if [[ ${SOAPYSDR} == *"airspy"* ]] && [[ -z "${RTLMULT}" ]]; then
 		# airspy runs at 3MSPS so needs a different sample rate multiplier
 		RTLMULT="240"
