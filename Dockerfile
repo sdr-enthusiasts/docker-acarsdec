@@ -69,6 +69,7 @@ RUN set -x && \
   # Clean up
   apt-get remove -y "${TEMP_PACKAGES[@]}" && \
   apt-get autoremove -y && \
+  bash /scripts/clean-build.sh && \
   rm -rf /src/* /tmp/* /var/lib/apt/lists/*
 
 # ENTRYPOINT [ "/init" ]
