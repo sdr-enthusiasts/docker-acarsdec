@@ -62,7 +62,7 @@ RUN set -x && \
   sed -i -e 's/-march=native//' CMakeLists.txt && \
   mkdir build && \
   pushd build && \
-  cmake ../ -DCMAKE_BUILD_TYPE=Debug -Drtl=OFF -Dsdrplay=OFF -Dairspy=OFF -Dsoapy=ON && \
+  cmake ../ -DCMAKE_BUILD_TYPE=Debug && \
   make && \
   make install && \
   popd && popd && \
