@@ -42,4 +42,4 @@ if [[ -n "$OUTPUT_SERVER_MODE" ]]; then
 fi
 
 "${s6wrap[@]}" echo "[INFO] Starting acars-bridge with command: $ACARS_BRIDGE_BIN ${ACARS_BRIDGE_CMD[*]}"
-"${s6wrap[@]}" "$ACARS_BRIDGE_BIN" "${ACARS_BRIDGE_CMD[@]}"
+exec "${s6wrap[@]}" "$ACARS_BRIDGE_BIN" "${ACARS_BRIDGE_CMD[@]}"
