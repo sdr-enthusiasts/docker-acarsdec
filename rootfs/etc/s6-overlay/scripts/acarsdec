@@ -56,6 +56,15 @@ if [[ -n "${RTL_SERIAL}" ]]; then
     fi
 fi
 
+if [[ -n "${AIRSPY_SERIAL}" ]]; then
+	ACARS_CMD+=("--airspy" "${AIRSPY_SERIAL}")
+    if chk_enabled "${BIASTEE}"; then
+        ACARS_CMD+=("-B" "1")
+    else
+        ACARS_CMD+=("-B" "0")
+    fi
+fi
+
 if [ -n "${PPM}" ]; then
 	ACARS_CMD+=("-p" "$PPM")
 fi
