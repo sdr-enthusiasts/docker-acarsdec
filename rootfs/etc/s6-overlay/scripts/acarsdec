@@ -39,10 +39,6 @@ fi
 # loop through the SOAPYSDR string and split on spaces
 if [[ -n "${SOAPYSDR}" ]]; then
 	ACARS_CMD+=("--soapysdr" "${SOAPYSDR}")
-	if [[ ${SOAPYSDR} == *"airspy"* ]] && [[ -z "${RTLMULT}" ]]; then
-		# airspy runs at 3MSPS so needs a different sample rate multiplier
-		RTLMULT="240"
-	fi
 fi
 
 if [[ -z "${RTL_SERIAL}" ]] && [[ -n "${SERIAL}" ]]; then
