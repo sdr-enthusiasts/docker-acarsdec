@@ -1,0 +1,493 @@
+check-added-large-files..................................................Passed
+check-case-conflict......................................................Passed
+check-executables-have-shebangs..........................................Passed
+check-github-actions.................................(no files to check)Skipped
+check-github-workflows...................................................Passed
+check-json...........................................(no files to check)Skipped
+check-merge-conflict.....................................................Passed
+check-shebang-scripts-are-executable.....................................Passed
+check-symlinks.......................................(no files to check)Skipped
+check-toml...........................................(no files to check)Skipped
+check-vcs-permalinks.....................................................Passed
+check-yaml...............................................................Passed
+codespell................................................................Passed
+deadnix..................................................................Passed
+detect-private-key.......................................................Passed
+end-of-file-fixer........................................................Passed
+forbid-new-submodules................................(no files to check)Skipped
+hadolint.................................................................Passed
+markdownlint.............................................................Passed
+mixed-line-ending........................................................Passed
+nixfmt...................................................................Passed
+no-commit-to-branch......................................................Passed
+prettier.................................................................Passed
+shellcheck...............................................................Failed
+- hook id: shellcheck
+- exit code: 1
+
+In README.md line 3:
+![Banner](https://github.com/sdr-enthusiasts/docker-acarshub/blob/16ab3757986deb7c93c08f5c7e3752f54a19629c/Logo-Sources/ACARS%20Hub.png "banner")
+ ^-- SC1035 (error): You are missing a required space after the !.
+ ^-- SC1035 (error): You need a space after the [ and before the ].
+ ^-- SC1073 (error): Couldn't parse this test expression. Fix to allow more checks.
+         ^-- SC1020 (error): You need a space before the ].
+         ^-- SC1036 (error): '(' is invalid here. Did you forget to escape it?
+         ^-- SC1072 (error): Missing space before ]. Fix any mentioned problems and try again.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1020 -- You need a space before the ].
+  https://www.shellcheck.net/wiki/SC1035 -- You are missing a required space ...
+  https://www.shellcheck.net/wiki/SC1036 -- '(' is invalid here. Did you forg...
+
+In Dockerfile.local line 141:
+    #git checkout master && \
+                             ^-- SC1143 (error): This backslash is part of a comment and does not continue the line.
+
+
+In .gitattributes line 2:
+* text=auto
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1143 -- This backslash is part of a comme...
+  https://www.shellcheck.net/wiki/SC2211 -- This is a glob used as a command ...
+
+In .dockerignore line 1:
+.git*
+^---^ SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 5:
+build*.sh
+^-------^ SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 24:
+rootfs/webapp/static/images/*hour.png
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 25:
+rootfs/webapp/static/images/*hours.png
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 26:
+rootfs/webapp/static/images/*days.png
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 27:
+rootfs/webapp/static/images/*week.png
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 28:
+rootfs/webapp/static/images/*months.png
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .dockerignore line 29:
+rootfs/webapp/static/images/*year.png
+^-- SC2211 (warning): This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?
+
+
+In .github/workflows/deploy.yml line 23:
+  IMAGE_NAME: ${{ github.repository }}
+              ^---------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                ^------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                     ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+  IMAGE_NAME: "${{ github.repository }"}
+
+
+In .github/workflows/deploy.yml line 30:
+    if: |
+      ^-- SC1130 (error): You need a space before the :.
+
+
+In .github/workflows/deploy.yml line 31:
+      github.event_name == 'workflow_dispatch' &&
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy.yml line 35:
+      - name: Log dispatch reason
+      ^-- SC2215 (warning): This flag is used as a command name. Bad line break or missing [ .. ]?
+
+
+In .github/workflows/deploy.yml line 37:
+          INPUTS_REASON: ${{ github.event.inputs.reason }}
+                         ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                           ^---------------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                         ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+          INPUTS_REASON: "${{ github.event.inputs.reason }"}
+
+
+In .github/workflows/deploy.yml line 38:
+          INPUTS_USE_TEST_IMAGE: ${{ github.event.inputs.use_test_image }}
+                                 ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                                   ^-- SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                                         ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+          INPUTS_USE_TEST_IMAGE: "${{ github.event.inputs.use_test_image }"}
+
+
+In .github/workflows/deploy.yml line 40:
+          echo "Workflow dispatch reason: $INPUTS_REASON"
+          ^-- SC2216 (warning): Piping to 'echo', a command that doesn't read stdin. Did you want 'cat' instead?
+
+
+In .github/workflows/deploy.yml line 44:
+    if: |
+      ^-- SC1130 (error): You need a space before the :.
+
+
+In .github/workflows/deploy.yml line 45:
+      github.event.inputs.build_latest_as_test == 'false' ||
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy.yml line 46:
+      github.event.inputs.build_latest_as_test == ''
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy.yml line 51:
+      ghcr_repo_owner: ${{ github.repository_owner }}
+                       ^---------------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                         ^------------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                    ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_repo_owner: "${{ github.repository_owner }"}
+
+
+In .github/workflows/deploy.yml line 52:
+      ghcr_repo: ${{ github.repository }}
+                 ^---------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                   ^------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                        ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_repo: "${{ github.repository }"}
+
+
+In .github/workflows/deploy.yml line 55:
+      build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '' }}
+                    ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                      ^-- SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                                                                                   ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      build_latest: "${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '' }"}
+
+
+In .github/workflows/deploy.yml line 56:
+      build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
+                            ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                              ^-- SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                                              ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      build_baseimage_test: "${{ github.event.inputs.use_test_image == 'true' }"}
+
+
+In .github/workflows/deploy.yml line 60:
+      ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+                  ^------------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                    ^---------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                            ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_token: "${{ secrets.GITHUB_TOKEN }"}
+
+
+In .github/workflows/deploy.yml line 64:
+    if: |
+      ^-- SC1130 (error): You need a space before the :.
+
+
+In .github/workflows/deploy.yml line 65:
+      github.event.inputs.build_latest_as_test == 'true' &&
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy.yml line 66:
+      (github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == '')
+      ^-- SC2205 (warning): (..) is a subshell. Did you mean [ .. ], a test expression?
+       ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+                                                        ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy.yml line 71:
+      ghcr_repo_owner: ${{ github.repository_owner }}
+                       ^---------------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                         ^------------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                    ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_repo_owner: "${{ github.repository_owner }"}
+
+
+In .github/workflows/deploy.yml line 72:
+      ghcr_repo: ${{ github.repository }}
+                 ^---------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                   ^------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                        ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_repo: "${{ github.repository }"}
+
+
+In .github/workflows/deploy.yml line 81:
+      ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+                  ^------------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                    ^---------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                            ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_token: "${{ secrets.GITHUB_TOKEN }"}
+
+
+In flake.lock line 2:
+  "nodes": {
+           ^-- SC1083 (warning): This { is literal. Check expression (missing ;/\n?) or quote it.
+
+
+In flake.lock line 3:
+    "flake-compat": {
+                    ^-- SC1083 (warning): This { is literal. Check expression (missing ;/\n?) or quote it.
+
+
+In flake.lock line 5:
+      "locked": {
+                ^-- SC1083 (warning): This { is literal. Check expression (missing ;/\n?) or quote it.
+
+
+In flake.lock line 12:
+      },
+       ^-- SC1070 (error): Parsing stopped here. Mismatched keywords or invalid parentheses?
+       ^-- SC1141 (error): Unexpected tokens after compound command. Bad redirection or missing ;/&&/||/|?
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1130 -- You need a space before the :.
+  https://www.shellcheck.net/wiki/SC1141 -- Unexpected tokens after compound ...
+  https://www.shellcheck.net/wiki/SC2284 -- Use [ x = y ] to compare values (...
+
+In Dockerfile line 59:
+    #git checkout master && \
+                             ^-- SC1143 (error): This backslash is part of a comment and does not continue the line.
+
+
+In .github/workflows/deploy_trixie.yml line 23:
+  IMAGE_NAME: ${{ github.repository }}
+              ^---------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                ^------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                     ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+  IMAGE_NAME: "${{ github.repository }"}
+
+
+In .github/workflows/deploy_trixie.yml line 30:
+    if: |
+      ^-- SC1130 (error): You need a space before the :.
+
+
+In .github/workflows/deploy_trixie.yml line 31:
+      github.event_name == 'workflow_dispatch' &&
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy_trixie.yml line 35:
+      - name: Log dispatch reason
+      ^-- SC2215 (warning): This flag is used as a command name. Bad line break or missing [ .. ]?
+
+
+In .github/workflows/deploy_trixie.yml line 37:
+          INPUTS_REASON: ${{ github.event.inputs.reason }}
+                         ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                           ^---------------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                         ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+          INPUTS_REASON: "${{ github.event.inputs.reason }"}
+
+
+In .github/workflows/deploy_trixie.yml line 38:
+          INPUTS_USE_TEST_IMAGE: ${{ github.event.inputs.use_test_image }}
+                                 ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                                   ^-- SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                                         ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+          INPUTS_USE_TEST_IMAGE: "${{ github.event.inputs.use_test_image }"}
+
+
+In .github/workflows/deploy_trixie.yml line 39:
+          INPUTS_BUILD_LATEST_AS_TEST: ${{ github.event.inputs.build_latest_as_test }}
+                                       ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+                                         ^-- SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                                                     ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+          INPUTS_BUILD_LATEST_AS_TEST: "${{ github.event.inputs.build_latest_as_test }"}
+
+
+In .github/workflows/deploy_trixie.yml line 41:
+          echo "Workflow dispatch reason: $INPUTS_REASON"
+          ^-- SC2216 (warning): Piping to 'echo', a command that doesn't read stdin. Did you want 'cat' instead?
+
+
+In .github/workflows/deploy_trixie.yml line 47:
+    if: |
+      ^-- SC1130 (error): You need a space before the :.
+
+
+In .github/workflows/deploy_trixie.yml line 48:
+      github.event.inputs.build_latest_as_test == 'false' ||
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy_trixie.yml line 49:
+      github.event.inputs.build_latest_as_test == ''
+      ^-- SC2284 (error): Use [ x = y ] to compare values (or quote '==' if literal).
+
+
+In .github/workflows/deploy_trixie.yml line 54:
+      ghcr_repo_owner: ${{ github.repository_owner }}
+                       ^---------------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                         ^------------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                                    ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_repo_owner: "${{ github.repository_owner }"}
+
+
+In .github/workflows/deploy_trixie.yml line 55:
+      ghcr_repo: ${{ github.repository }}
+                 ^---------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                   ^------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                        ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_repo: "${{ github.repository }"}
+
+
+In .github/workflows/deploy_trixie.yml line 62:
+      ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+                  ^------------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                    ^---------------------^ SC2296 (error): Parameter expansions can't start with {. Double check syntax.
+                                            ^-- SC1083 (warning): This } is literal. Check expression (missing ;/\n?) or quote it.
+
+Did you mean:
+      ghcr_token: "${{ secrets.GITHUB_TOKEN }"}
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1130 -- You need a space before the :.
+  https://www.shellcheck.net/wiki/SC1143 -- This backslash is part of a comme...
+  https://www.shellcheck.net/wiki/SC2284 -- Use [ x = y ] to compare values (...
+
+In rootfs/etc/s6-overlay/scripts/01-acarsdec line 4:
+source /scripts/common
+       ^-------------^ SC1091 (info): Not following: /scripts/common: openBinaryFile: does not exist (No such file or directory)
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1091 -- Not following: /scripts/common: o...
+
+In .gitignore line 51:
+!.vscode/settings.json
+ ^-- SC1035 (error): You are missing a required space after the !.
+
+
+In .gitignore line 52:
+!.vscode/tasks.json
+ ^-- SC1035 (error): You are missing a required space after the !.
+
+
+In .gitignore line 53:
+!.vscode/launch.json
+ ^-- SC1035 (error): You are missing a required space after the !.
+
+
+In .gitignore line 54:
+!.vscode/extensions.json
+ ^-- SC1035 (error): You are missing a required space after the !.
+
+
+In .gitignore line 68:
+[Dd]esktop.ini
+^-- SC1035 (error): You need a space after the [ and before the ].
+^-- SC1073 (error): Couldn't parse this test expression. Fix to allow more checks.
+              ^-- SC1080 (error): When breaking lines in [ ], you need \ before the linefeed.
+
+
+In .gitignore line 71:
+$RECYCLE.BIN/
+^-- SC1072 (error): Expected test to end here (don't wrap commands in []/[[]]). Fix any mentioned problems and try again.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1035 -- You are missing a required space ...
+  https://www.shellcheck.net/wiki/SC1080 -- When breaking lines in [ ], you n...
+  https://www.shellcheck.net/wiki/SC1072 -- Expected test to end here (don't ...
+
+In LICENSE line 3:
+Copyright (C) 2022-2024 Fred Clausen
+^-- SC1073 (error): Couldn't parse this function. Fix to allow more checks.
+           ^-- SC1065 (error): Trying to declare parameters? Don't. Use () and refer to params as $1, $2..
+              ^-- SC1064 (error): Expected a { to open the function definition.
+              ^-- SC1072 (error):  Fix any mentioned problems and try again.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1064 -- Expected a { to open the function...
+  https://www.shellcheck.net/wiki/SC1065 -- Trying to declare parameters? Don...
+  https://www.shellcheck.net/wiki/SC1072 --  Fix any mentioned problems and t...
+
+In flake.nix line 2:
+  description = "Dev shell and Linting";
+              ^-- SC2283 (error): Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal).
+
+
+In flake.nix line 4:
+  inputs = {
+         ^-- SC2283 (error): Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal).
+           ^-- SC1083 (warning): This { is literal. Check expression (missing ;/\n?) or quote it.
+
+
+In flake.nix line 5:
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+                ^-- SC2283 (error): Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal).
+
+
+In flake.nix line 7:
+    precommit = {
+              ^-- SC2283 (error): Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal).
+                ^-- SC1083 (warning): This { is literal. Check expression (missing ;/\n?) or quote it.
+
+
+In flake.nix line 9:
+      url = "path:/home/fred/GitHub/pre-commit-checks";
+          ^-- SC2283 (error): Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal).
+
+
+In flake.nix line 10:
+      inputs.nixpkgs.follows = "nixpkgs";
+                             ^-- SC2283 (error): Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal).
+
+
+In flake.nix line 12:
+  };
+  ^-- SC1089 (error): Parsing stopped here. Is this keyword correctly matched up?
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2283 -- Remove spaces around = to assign ...
+  https://www.shellcheck.net/wiki/SC1083 -- This { is literal. Check expressi...
+  https://www.shellcheck.net/wiki/SC1089 -- Parsing stopped here. Is this key...
+
+statix...................................................................Passed
+trailing-whitespace......................................................Passed

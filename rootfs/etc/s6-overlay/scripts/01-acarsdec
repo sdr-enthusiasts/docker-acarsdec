@@ -1,53 +1,52 @@
 #!/command/with-contenv bash
 # shellcheck shell=bash
+# shellcheck source-path=source-stubs
+# shellcheck source-path=SCRIPTDIR
 
-# shellcheck disable=SC1091
 source /scripts/common
 
 # FEED_ID needs to be set
 
 if [[ -z "${FEED_ID}" ]]; then
-	# shellcheck disable=SC2154
-	"${s6wrap[@]}" echo "FEED_ID is not set, exiting"
-	exit 1
+    "${s6wrap[@]}" echo "FEED_ID is not set, exiting"
+    exit 1
 fi
 
 # FREQUENCIES needs to be set
 
 if [[ -z "${FREQUENCIES}" ]]; then
-	"${s6wrap[@]}" echo "FREQUENCIES is not set, exiting"
-	exit 1
+    "${s6wrap[@]}" echo "FREQUENCIES is not set, exiting"
+    exit 1
 fi
 
-IFS='; ' read -ra SPLIT_FREQS <<< "${FREQUENCIES}"
+IFS='; ' read -ra SPLIT_FREQS <<<"${FREQUENCIES}"
 
 # loop through SPLIT_FREQS
 
 # FREQUENCIES needs to be in the range of 118.0 - 137.0.
 
 FREQ_STRING=""
-for i in "${SPLIT_FREQS[@]}"
-do
-	if (( $(bc <<< "$i < 118.0") || $(bc <<< "$i > 137.0") )); then
-		"${s6wrap[@]}" echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
-	fi
-	if [[ -z "${FREQ_STRING}" ]]; then
-		FREQ_STRING="$i"
-	else
-		FREQ_STRING+=" $i"
-	fi
+for i in "${SPLIT_FREQS[@]}"; do
+    if (($(bc <<<"$i < 118.0") || $(bc <<<"$i > 137.0"))); then
+        "${s6wrap[@]}" echo "FREQUENCY $i is not in the range of 118.0 - 137.0"
+    fi
+    if [[ -z "${FREQ_STRING}" ]]; then
+        FREQ_STRING="$i"
+    else
+        FREQ_STRING+=" $i"
+    fi
 done
 
 # Make sure mode is valid
 if [[ "${MODE}" != @(J|j|P|p|A|a) ]]; then
-	"${s6wrap[@]}" echo "MODE is not valid, exiting"
-	exit 1
+    "${s6wrap[@]}" echo "MODE is not valid, exiting"
+    exit 1
 fi
 
 # Make sure GAIN is valid (if set)
-if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<< "${GAIN}")" == "0" ]]; then
-	"${s6wrap[@]}" echo "GAIN is not valid, exiting"
-	exit 1
+if [[ -n "${GAIN}" ]] && [[ "$(awk '{if ($1 > 0 && $1 < 100) printf "%i", $1 * 10; else printf "%i", $1;}' <<<"${GAIN}")" == "0" ]]; then
+    "${s6wrap[@]}" echo "GAIN is not valid, exiting"
+    exit 1
 fi
 
 if [[ -z "${SOAPYSDR}" ]] && [[ -z "${RTL_SERIAL}" ]] && [[ -z "${SERIAL}" ]] && [[ -z "${AIRSPY_SERIAL}" ]]; then

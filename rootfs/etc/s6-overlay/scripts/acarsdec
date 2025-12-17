@@ -1,17 +1,18 @@
 #!/command/with-contenv bash
-#shellcheck shell=bash
+# shellcheck shell=bash
+# shellcheck source-path=source-stubs
+# shellcheck source-path=SCRIPTDIR
 
-# shellcheck disable=SC1091
 source /scripts/common
 
 ACARS_BIN="/usr/local/bin/acarsdec"
-# shellcheck disable=SC2001
+
 FREQ_STRING=""
 
 ACARS_CMD=("-i" "$FEED_ID")
 
 if [ -n "${CENTER_FREQ}" ]; then
-	ACARS_CMD+=("-c" "$CENTER_FREQ")
+    ACARS_CMD+=("-c" "$CENTER_FREQ")
 fi
 
 # if [[ -n "${SERVER}" ]] || [[ -n "$OUTPUT_SERVER" ]]; then
@@ -23,22 +24,22 @@ fi
 # fi
 
 if [ -n "${VERBOSE}" ]; then
-	ACARS_CMD+=("-v")
+    ACARS_CMD+=("-v")
 fi
 
 # Send output JSON to acars-bridge
 
 if [[ "${MODE}" == @(J|j) ]]; then
-	ACARS_CMD+=("--output" "json:udp:host=127.0.0.1,port=5550")
+    ACARS_CMD+=("--output" "json:udp:host=127.0.0.1,port=5550")
 elif [[ "${MODE}" == @(P|p) ]]; then
-	ACARS_CMD+=("--output" "pp:udp:host=127.0.0.1,port=5550")
+    ACARS_CMD+=("--output" "pp:udp:host=127.0.0.1,port=5550")
 elif [[ "${MODE}" == @(A|a) ]]; then
-	ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
+    ACARS_CMD+=("--output" "native:udp:host=127.0.0.1,port=5550")
 fi
 
 # loop through the SOAPYSDR string and split on spaces
 if [[ -n "${SOAPYSDR}" ]]; then
-	ACARS_CMD+=("--soapysdr" "${SOAPYSDR}")
+    ACARS_CMD+=("--soapysdr" "${SOAPYSDR}")
 fi
 
 if [[ -z "${RTL_SERIAL}" ]] && [[ -n "${SERIAL}" ]]; then
@@ -46,9 +47,8 @@ if [[ -z "${RTL_SERIAL}" ]] && [[ -n "${SERIAL}" ]]; then
     RTL_SERIAL="${SERIAL}"
 fi
 
-
 if [[ -n "${RTL_SERIAL}" ]]; then
-	ACARS_CMD+=("--rtlsdr" "${RTL_SERIAL}")
+    ACARS_CMD+=("--rtlsdr" "${RTL_SERIAL}")
     if chk_enabled "${BIASTEE}"; then
         ACARS_CMD+=("-B" "1")
     else
@@ -57,7 +57,7 @@ if [[ -n "${RTL_SERIAL}" ]]; then
 fi
 
 if [[ -n "${AIRSPY_SERIAL}" ]]; then
-	ACARS_CMD+=("--airspy" "${AIRSPY_SERIAL}")
+    ACARS_CMD+=("--airspy" "${AIRSPY_SERIAL}")
     if chk_enabled "${BIASTEE}"; then
         ACARS_CMD+=("-B" "1")
     else
@@ -66,7 +66,7 @@ if [[ -n "${AIRSPY_SERIAL}" ]]; then
 fi
 
 if [ -n "${PPM}" ]; then
-	ACARS_CMD+=("-p" "$PPM")
+    ACARS_CMD+=("-p" "$PPM")
 fi
 
 if [ -z "$GAIN" ]; then
@@ -76,30 +76,29 @@ fi
 ACARS_CMD+=("-g" "$GAIN")
 
 if [[ -n "$ACARSDEC_COMMAND_EXTRA" ]]; then
-	ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
+    ACARS_CMD+=("$ACARSDEC_COMMAND_EXTRA")
 fi
 
 if [ -n "${RTLMULT}" ]; then
     ACARS_CMD+=("-m" "$RTLMULT")
 fi
 
-# shellcheck disable=SC2206
-ACARS_CMD+=($FREQ_STRING)
+if [[ -n "${FREQ_STRING}" ]]; then
+    read -r -a _freq_args <<<"${FREQ_STRING}"
+    ACARS_CMD+=("${_freq_args[@]}")
+fi
 
-# shellcheck disable=SC2154
 "${s6wrap[@]}" echo "Starting: '$ACARS_BIN" "${ACARS_CMD[*]}'"
 
 if chk_enabled "${QUIET_LOGS}"; then
-	# shellcheck disable=SC2016
-	FILTER_TERMS+=("-e" "Found .* tuner")
-	FILTER_TERMS+=("-e" "Setting sample rate")
-	FILTER_TERMS+=("-e" "Setting bandwidth")
-	FILTER_TERMS+=("-e" "Starting, decoding .* channels")
-	FILTER_TERMS+=("-e" "Exact sample rate is: ")
-	exec "${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}" > >(grep --line-buffered -v "${FILTER_TERMS[@]}")
+    FILTER_TERMS+=("-e" "Found .* tuner")
+    FILTER_TERMS+=("-e" "Setting sample rate")
+    FILTER_TERMS+=("-e" "Setting bandwidth")
+    FILTER_TERMS+=("-e" "Starting, decoding .* channels")
+    FILTER_TERMS+=("-e" "Exact sample rate is: ")
+    exec "${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}" > >(grep --line-buffered -v "${FILTER_TERMS[@]}")
 else
-	# shellcheck disable=SC2016
-	exec "${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}"
+    exec "${s6wrap[@]}" "$ACARS_BIN" "${ACARS_CMD[@]}"
 fi
 
 sleep 5
