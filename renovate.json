@@ -29,9 +29,7 @@
     },
     {
       "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "/^ghcr\\.io/sdr-enthusiasts/(docker-baseimage).*$/"
-      ],
+      "matchPackageNames": ["/^ghcr\\.io/sdr-enthusiasts/.*$/"],
       "enabled": false
     }
   ]
