@@ -1,5 +1,5 @@
 #build acars-bridge
-FROM rust:1.93.0@sha256:bbde3ca426faeebab3eb58b8005d3d6da70607817a14bb92a55c94611d4d905f as builder
+FROM rust:1.97.1@sha256:1bcff4befb740599103a2c7cb51058e14479b2e35e3a34a3f0dc4ede09927488 as builder
 WORKDIR /tmp/acars-bridge
 # hadolint ignore=DL3008,DL3003,SC1091
 RUN set -x && \
