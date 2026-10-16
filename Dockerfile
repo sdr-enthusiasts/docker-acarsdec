@@ -54,7 +54,7 @@ RUN set -x && \
     #git clone --depth 1 --single-branch --branch master https://github.com/TLeconte/acarsdec /src/acarsdec && \
     #git clone --depth 1 --single-branch --branch master https://github.com/wiedehopf/acarsdec.git /src/acarsdec && \
     #git clone --depth 1 --single-branch --branch master https://github.com/fredclausen/acarsdec.git /src/acarsdec && \
-    git clone --depth 1 --single-branch --branch master https://github.com/f00b4r0/acarsdec.git /src/acarsdec && \
+    git clone --depth 1 --single-branch --branch v4.6 https://github.com/f00b4r0/acarsdec.git /src/acarsdec && \
     pushd /src/acarsdec && \
     #git checkout master && \
     #git checkout testing && \
